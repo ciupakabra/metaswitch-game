@@ -86,7 +86,10 @@ class Network {
 		if (cable.node1 == cable.node2)
 			return false;
 
-		// Checks if we can connect in case of servers
+		// At least one of the nodes has to be a server
+		if (!(cable.node1 instanceof Server) && !(cable.node2 instanceof Server))
+			return false;
+		// They have to satisfy the server restrictions
 		if (cable.node1 instanceof Server && !cable.node1.can_connect(cable.node2))
 			return false;
 		if (cable.node2 instanceof Server && !cable.node2.can_connect(cable.node1))
@@ -95,6 +98,9 @@ class Network {
 		if (this.adjacency_list[cable.node1].includes(cable.node2))
 			return false;
 		this.cables.push(cable);
+		this.adjacency_list[cable.node1].push(cable.node2);
+		this.adjacency_list[cable.node2].push(cable.node1);
+		this.update_distances();
 		return true;
 	}
 
