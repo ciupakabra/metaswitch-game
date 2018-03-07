@@ -85,6 +85,13 @@ class Network {
 	add_cable(cable) {
 		if (cable.node1 == cable.node2)
 			return false;
+
+		// Checks if we can connect in case of servers
+		if (cable.node1 instanceof Server && !cable.node1.can_connect(cable.node2))
+			return false;
+		if (cable.node2 instanceof Server && !cable.node2.can_connect(cable.node1))
+			return false;
+
 		if (this.adjacency_list[cable.node1].includes(cable.node2))
 			return false;
 		this.cables.push(cable);
