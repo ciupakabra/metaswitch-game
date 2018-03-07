@@ -1,5 +1,5 @@
 class Packet {
-	construct(origin, destination, content, time) {
+	constructor(origin, destination, content, time) {
 		this.origin = origin;
 		this.destination = destination;
 		this.content = content;
@@ -8,10 +8,13 @@ class Packet {
 	}
 
 	update() {
-		this.timeleft -= 1;
-		if (this.timeleft < 0)
+		if (this.timeleft == 0) {
+			this.timeleft = -1;
 			this.state = false;
-		else
-			this.state = true;
+			return -1;
+		} else {
+			this.timeleft--;
+		}
+		return 0;
 	}
 }

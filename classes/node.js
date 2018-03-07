@@ -9,4 +9,8 @@ class Node {
 	dist(node) {
 		return Math.sqrt((this.x - node.x)**2 + (this.y - node.y)**2);
 	}
+
+	update() {
+		return 0;
+	}
 }

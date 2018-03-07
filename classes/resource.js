@@ -1,29 +1,28 @@
 class ResourceUnit {
-	construct(type, reward) {
+	constructor(type, reward, timeout) {
 		this.type = type;
 		this.reward = reward;
+		this.timeout = timeout;
 	}
 }
 
 class Resource extends Node {
-	construct(network, x, y, resource_unit) {
+	constructor(network, x, y, resource_unit) {
 		super(network, x, y);
 		this.resource_unit = resource_unit;
 	}
 
 	process_packet(packet) {
-		if (packet.destination != this || packet.destination != this.resource_unit)
-			return false;
-
-		if (packet.content == "request") {
-			new_packet = new Packet(this, packet.origin, this.resource_unit, packet.timeleft);
-			cable = this.network.get_cable(this, new_packet.destination);
-			return cable.send_packet(this, new_packet);
+		if (!packet.state) {
+			this.network.delete_packet(packet);
+			return true;
 		}
 
-		return false;
-	}
+		if (packet.destination != this.resource_unit)
+			return false;
 
-	update() {
+		var new_packet = new Packet(this, packet.origin, this.resource_unit, packet.timeleft);
+		var cable = this.network.get_cable(this, new_packet.destination);
+		return cable.send_packet(this, new_packet);
 	}
 }

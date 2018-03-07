@@ -49,10 +49,10 @@ class Cable {
 
 		// Transfer the packets which travelled through the cable
 		while (this.Q1.length != 0 && this.Q1[0][1] >= this.distance) {
-			this.node_2.process_packet(this.Q1.shift());
+			this.node_2.process_packet(this.Q1.shift()[0]);
 		}
 		while (this.Q2.length != 0 && this.Q2[0][1] >= this.distance) {
-			this.node_1.process_packet(this.Q2.shift());
+			this.node_1.process_packet(this.Q2.shift()[0]);
 		}
 
 		// Add packets from buffers to cables if possible

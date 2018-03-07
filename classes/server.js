@@ -9,33 +9,22 @@ class Server extends Node {
 		this.connected_resources = 0;
 	}
 
-	// Checks if adding a cable between this server and a node doesn't
-	// exceed the limitations.
-	can_connect(node) {
-		if (node instanceof Server) {
-			return this.connected_servers < this.max_servers;
-		}
-
-		if (node instanceof Resource) {
-			return this.connected_resources < this.max_resources;
-		}
-
-		if (node instanceof Cities) {
-			return this.connected_cities < this.max_cities;
-		}
-	}
-
 	process_packet(packet) {
+		if (!packet.state) {
+			this.network.delete_packet(packet);
+			return true;
+		}
+
 		// Packet destination is a specific node
 		if (packet.destination instanceof Node) {
-			cable = this.network.get_cable(this, packet.destination);
+			var cable = this.network.get_cable(this, packet.destination);
 			return cable.send_packet(this, packet);
 		}
 
 		// Packet destination is a type of resource
 		if (packet.destination instanceof ResourceUnit) {
-			resource = this.network.get_nearest_resource(this, packet.destination);
-			cable = this.network.get_cable(this, resource);
+			var resource = this.network.get_nearest_resource(this, packet.destination);
+			var cable = this.network.get_cable(this, resource);
 			return cable.send_packet(this, packet);
 		}
 
