@@ -1,8 +1,9 @@
 class ResourceUnit {
-	constructor(type, reward, timeout) {
+	constructor(type, reward, timeout, color) {
 		this.type = type;
 		this.reward = reward;
 		this.timeout = timeout;
+		this.color = color;
 	}
 }
 
@@ -10,6 +11,7 @@ class Resource extends Node {
 	constructor(network, x, y, resource_unit) {
 		super(network, x, y);
 		this.resource_unit = resource_unit;
+		this.color = this.resource_unit.color;
 		spriteInit(this);
 	}
 

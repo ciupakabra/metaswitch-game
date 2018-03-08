@@ -50,10 +50,14 @@ class Cable {
 
 		// Transfer the packets which travelled through the cable
 		while (this.Q1.length != 0 && this.Q1[0][1] >= this.distance) {
-			this.node_2.process_packet(this.Q1.shift()[0]);
+			var packet = this.Q1.shift()[0]
+			this.node_2.process_packet(packet);
+			packet.sprite.destroy();
 		}
 		while (this.Q2.length != 0 && this.Q2[0][1] >= this.distance) {
-			this.node_1.process_packet(this.Q2.shift()[0]);
+			var packet = this.Q2.shift()[0]
+			this.node_1.process_packet(packet);
+			packet.sprite.destroy();
 		}
 
 		// Add packets from buffers to cables if possible
@@ -61,12 +65,14 @@ class Cable {
 			var packet = this.B1.shift();
 			this.delay_1 = this.lambda;
 			this.Q1.push([packet, 0]);
+			spriteInit(packet, this, 1);
 		}
 
 		if (this.B2.length != 0 && this.delay_2 == 0) {
 			var packet = this.B2.shift();
 			this.delay_2 = this.lambda;
 			this.Q2.push([packet, 0]);
+			spriteInit(packet, this, 2);
 		}
 	}
 }

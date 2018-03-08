@@ -12,13 +12,17 @@ var config = {
 var game = new Phaser.Game(config);
 var cursors;
 var mode = 'cable';
-var connect = null;
+var connect = null; // Temporary variable used for connecting two nodes
+var scale = 40; // Global scale for how far apart the textures are
+var speed = 30; // How long before network update (60/speed updates per second)
+var time = 0;
 
 
 function preload () {
 	this.load.image('server', 'assets/server.png');
 	this.load.image('resource', 'assets/resource.png');
 	this.load.image('city', 'assets/city.png');
+	this.load.image('packet', 'assets/packet.png');
   cursors = game.input.keyboard.createCursorKeys();
 }
 
@@ -34,9 +38,9 @@ function create () {
 
 	network = new Network();
 
-	resource_unit1 = new ResourceUnit(1, 10, 100);
-	resource_unit2 = new ResourceUnit(2, 10, 100);
-	resource_unit3 = new ResourceUnit(3, 10, 100);
+	resource_unit1 = new ResourceUnit(1, 10, 100, '0xff0000');
+	resource_unit2 = new ResourceUnit(2, 10, 100, '0x00ff00');
+	resource_unit3 = new ResourceUnit(3, 10, 100, '0x0000ff');
 
 	resource1 = new Resource(network, 0, 0, resource_unit1);
 	resource2 = new Resource(network, 5, 5, resource_unit2);
@@ -87,7 +91,7 @@ function create () {
 	network.add_node(server1);
 	network.add_node(server2);
 	//server1 cables
-	/*
+
 	cable1_c2 = new Cable(network, server1, city2, 3, 1);
 	cable1_c3 = new Cable(network, server1, city3, 3, 1);
 	cable1_r1 = new Cable(network, server1, resource1, 3, 1);
@@ -125,9 +129,11 @@ function update () {
 		moveCamera();
 
 		// Bug this.edges[destination_idx] is undefined when no cables
-		/*
-		network.update();
-		*/
+
+		if (timeUpdate(speed)) {
+			network.update();
+	  }
+
 }
 
 function moveCamera() {
@@ -149,40 +155,71 @@ function moveCamera() {
         game.camera.x += 8;
     }
 }
-function spriteInit(item) {
+function spriteInit(item, cable, dir) {
 	if (item instanceof Node) {
 		node = item;
-	if (node instanceof Server) {
-		node.sprite = game.add.sprite(node.x*40, node.y*40, 'server');
-	}
-	if (node instanceof City) {
-		node.sprite = game.add.sprite(node.x*40, node.y*40, 'city');
-	}
-	if (node instanceof Resource) {
-		node.sprite = game.add.sprite(node.x*40, node.y*40, 'resource');
-	}
-	node.sprite.inputEnabled = true;
-	node.sprite.events.onInputDown.add(listener);
-	node.sprite.node = node;
-	node.sprite.anchor.set(0.5, 0.5);
+		if (node instanceof Server) {
+			node.sprite = game.add.sprite(node.x*scale, node.y*scale, 'server');
+			node.sprite.anchor.set(0.5, 0.5);
+			node.color = '0x9bfbff';
+		}
+		if (node instanceof City) {
+			node.sprite = game.add.sprite(node.x*scale, node.y*scale, 'city');
+			node.sprite.anchor.set(0.5, 0.5);
+			node.color = '0x9bfbff';
+		}
+		if (node instanceof Resource) {
+			node.sprite = game.add.sprite(node.x*scale, node.y*scale, 'resource');
+			node.sprite.anchor.set(0.5, 0.6);
+		}
+		node.sprite.inputEnabled = true;
+		node.sprite.events.onInputDown.add(listener);
+		node.sprite.node = node;
+		node.sprite.tint = node.color;
   }
 	if (item instanceof Cable) {
 		cable = item;
-		cable.line = new Phaser.Line(cable.node_1.x*40,cable.node_1.y*40,cable.node_2.x*40,cable.node_2.y*40);
+		cable.line = new Phaser.Line(cable.node_1.x*scale,cable.node_1.y*scale,cable.node_2.x*scale,cable.node_2.y*scale);
 		cable.graphics = game.add.graphics();
-		cable.graphics.lineStyle(10, 0xffd900, 1);
+		cable.graphics.lineStyle(6, 0xffd900, 1);
 		cable.graphics.moveTo(cable.line.start.x,cable.line.start.y);
 		cable.graphics.lineTo(cable.line.end.x,cable.line.end.y);
 		cable.graphics.endFill();
 		cable.node_1.sprite.bringToTop();
 		cable.node_2.sprite.bringToTop();
 	}
+	if (item instanceof Packet) {
+		packet = item;
+		if (dir == 1) {
+			packet.sprite = game.add.sprite(cable.node_1.x*scale, cable.node_1.y*scale, 'packet');
+		} else {
+			packet.sprite = game.add.sprite(cable.node_2.x*scale, cable.node_2.y*scale, 'packet');
+		}
+		packet.sprite.anchor.set(0.5, 0.5);
+		if (packet.content != null) {
+			packet.color = packet.content.color;
+		} else {
+			packet.color = '0x808080'
+		}
+		packet.sprite.tint = packet.color;
+		game.physics.arcade.enableBody(packet.sprite);
+		if (dir == 1) {
+			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_2.x*scale, cable.node_2.y*scale, (60/speed)*cable.distance*scale/(cable.total_time()));
+		} else {
+			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_1.x*scale, cable.node_1.y*scale, (60/speed)*cable.distance*scale/(cable.total_time()));
+		}
+	}
 }
 
 function listener(sprite) {
 		if (connect == null) {
 			connect = sprite;
-			sprite.tint = 0x00ff00;
+			var obj = Phaser.Color.hexToColor(sprite.node.color);
+			var r = Phaser.Color.blendAverage(obj.r, 30);
+			var g = Phaser.Color.blendAverage(obj.g, 30);
+			var b = Phaser.Color.blendAverage(obj.b, 30);
+			var color = Phaser.Color.RGBtoString(r,g,b,0,'#')
+			sprite.tint = '0x' + color.substring(1,7);
 			console.log("Hmm");
 		} else {
 			if (connect == sprite) {
@@ -196,7 +233,16 @@ function listener(sprite) {
 					console.log("Cable cannot be added");
 				}
 			}
-			connect.tint = 0xffffff;
+			connect.tint = connect.node.color;
 			connect = null;
 		}
+}
+
+function timeUpdate(n) {
+	time++;
+	if (time >= n) {
+		time = 0;
+		return true;
+	}
+	return false;
 }
