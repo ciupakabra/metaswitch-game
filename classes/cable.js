@@ -1,7 +1,7 @@
 class Cable {
 	constructor(network, node_1, node_2, lambda, v) {
 		this.network = network;
-		this.distance = node_1.dist(node_2); 
+		this.distance = node_1.dist(node_2);
 		this.node_1 = node_1;
 		this.node_2 = node_2;
 		this.lambda = lambda;
@@ -14,6 +14,7 @@ class Cable {
 		// to the cable.
 		this.delay_1 = 0;
 		this.delay_2 = 0;
+    spriteInit(this);
 	}
 
 	total_time() {
@@ -37,7 +38,7 @@ class Cable {
 			this.delay_1 -= 1;
 		if (this.delay_2 > 0)
 			this.delay_2 -= 1;
-		
+
 		// Update the distances along the cables
 		for (var i = 0;i < this.Q1.length;++i) {
 			this.Q1[i][1] += this.v;

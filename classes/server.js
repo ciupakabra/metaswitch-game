@@ -7,6 +7,7 @@ class Server extends Node {
 		this.connected_servers = 0;
 		this.connected_cities = 0;
 		this.connected_resources = 0;
+		spriteInit(this);
 	}
 
 	process_packet(packet) {

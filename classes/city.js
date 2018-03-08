@@ -6,6 +6,7 @@ class City extends Node {
 		this.poisson_distro = Prob.poisson(lambda);
 		this.next_packet_cd = this.poisson_distro.apply(this.seed);
 		this.coins = 0;
+		spriteInit(this);
 	}
 
 	process_packet(packet) {

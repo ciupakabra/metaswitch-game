@@ -10,6 +10,7 @@ class Resource extends Node {
 	constructor(network, x, y, resource_unit) {
 		super(network, x, y);
 		this.resource_unit = resource_unit;
+		spriteInit(this);
 	}
 
 	process_packet(packet) {
