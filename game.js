@@ -159,12 +159,20 @@ function moveCamera() {
 		if (game.camera.scale.x >= 0.5) {
 			game.camera.scale.x -= 0.025;
 			game.camera.scale.y -= 0.025;
+			// scaleFix(); // Enable to have constant size nodes
 		}
 	} else if (zoom.plus.isDown) {
 		if (game.camera.scale.x <= 2) {
 			game.camera.scale.x += 0.025;
 			game.camera.scale.y += 0.025;
+			// scaleFix(); // Enable to have constant size nodes
 		}
+	}
+}
+
+function scaleFix() {
+	for (var i = 0; i < network.nodes.length; i++) {
+		network.nodes[i].sprite.scale.setTo(1/game.camera.scale.x, 1/game.camera.scale.y);
 	}
 }
 function spriteInit(item, cable, dir) {
@@ -216,9 +224,9 @@ function spriteInit(item, cable, dir) {
 		packet.sprite.tint = packet.color;
 		game.physics.arcade.enableBody(packet.sprite);
 		if (dir == 1) {
-			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_2.x*scale, cable.node_2.y*scale, (60/speed)*cable.distance*scale/(cable.total_time()));
+			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_2.x*scale, cable.node_2.y*scale, (60/speed)*cable.distance*scale/Math.ceil(cable.total_time()));
 		} else {
-			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_1.x*scale, cable.node_1.y*scale, (60/speed)*cable.distance*scale/(cable.total_time()));
+			this.game.physics.arcade.moveToXY(packet.sprite, cable.node_1.x*scale, cable.node_1.y*scale, (60/speed)*cable.distance*scale/Math.ceil(cable.total_time()));
 		}
 	}
 }
