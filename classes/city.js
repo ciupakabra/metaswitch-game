@@ -49,7 +49,7 @@ class City extends Node {
 			var res = this.network.get_nearest_resource(this, req_unit);
 			var cable = this.network.get_cable(this, res);
 			cable.send_packet(this, new_packet);
-			this.next_packet_cd = this.poisson_distro.apply(this.seed);
+			this.next_packet_cd = 1 + this.poisson_distro.apply(this.seed);
 		}
 		var ret = this.coins;
 		this.coins = 0;
