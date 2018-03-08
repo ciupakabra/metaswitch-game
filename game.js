@@ -11,6 +11,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 var cursors;
+var zoom;
 var mode = 'cable';
 var connect = null; // Temporary variable used for connecting two nodes
 var scale = 40; // Global scale for how far apart the textures are
@@ -24,6 +25,7 @@ function preload () {
 	this.load.image('city', 'assets/city.png');
 	this.load.image('packet', 'assets/packet.png');
   cursors = game.input.keyboard.createCursorKeys();
+	zoom = game.input.keyboard.addKeys({ 'plus': Phaser.KeyCode.O, 'minus': Phaser.KeyCode.I});
 }
 
 function create () {
@@ -129,7 +131,6 @@ function update () {
 		moveCamera();
 
 		// Bug this.edges[destination_idx] is undefined when no cables
-
 		if (timeUpdate(speed)) {
 			network.update();
 	  }
@@ -154,6 +155,17 @@ function moveCamera() {
     {
         game.camera.x += 8;
     }
+	if (zoom.minus.isDown) {
+		if (game.camera.scale.x >= 0.5) {
+			game.camera.scale.x -= 0.025;
+			game.camera.scale.y -= 0.025;
+		}
+	} else if (zoom.plus.isDown) {
+		if (game.camera.scale.x <= 2) {
+			game.camera.scale.x += 0.025;
+			game.camera.scale.y += 0.025;
+		}
+	}
 }
 function spriteInit(item, cable, dir) {
 	if (item instanceof Node) {
