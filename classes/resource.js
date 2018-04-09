@@ -12,7 +12,11 @@ class Resource extends Node {
 		super(network, x, y);
 		this.resource_unit = resource_unit;
 		this.color = this.resource_unit.color;
-		spriteInit(this);
+		graphicsManager.spriteInitNode(this);
+	}
+
+	info() {
+		return "Type: resource\n";
 	}
 
 	process_packet(packet) {
@@ -24,8 +28,11 @@ class Resource extends Node {
 		if (packet.destination != this.resource_unit)
 			return false;
 
-		var new_packet = new Packet(this, packet.origin, this.resource_unit, packet.timeleft);
-		var cable = this.network.get_cable(this, new_packet.destination);
-		return cable.send_packet(this, new_packet);
+		packet.destination = packet.origin;
+		packet.origin = this;
+		packet.content = this.resource_unit;
+
+		var cable = this.network.get_cable(this, packet.destination);
+		return cable.send_packet(this, packet);
 	}
 }

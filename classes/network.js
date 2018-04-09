@@ -19,30 +19,10 @@ class Network {
 		var idx = this.packets.indexOf(packet);
 		if (idx == -1)
 			return false;
-		this.packet.splice(idx, 1);
+		this.packets.splice(idx, 1);
 		return true;
 	}
 	
-	update() {
-		var coins = 0;
-
-		for (var i = 0;i < this.nodes.length;++i) {
-			coins += this.nodes[i].update();
-		}
-
-		for (var i = 0;i < this.cables.length;++i) {
-			this.cables[i].update();
-		}
-
-		var died = 0;
-
-		for (var i = 0;i < this.packets.length;++i) {
-			died += this.packets[i].update();
-		}
-
-		return [died, coins];
-	}
-
 	update_distances() {
 		for (var i = 0;i < this.nodes.length;++i) {
 			this.dijkstra(i);
@@ -147,6 +127,8 @@ class Network {
 
 	add_cable(cable) {
 		if (this.can_connect(cable.node_1, cable.node_2)) {
+			cable.node_1.connect_with(cable.node_2);
+			cable.node_2.connect_with(cable.node_1);
 			this.cables.push(cable);
 			var idx_1 = this.nodes.indexOf(cable.node_1);
 			var idx_2 = this.nodes.indexOf(cable.node_2);

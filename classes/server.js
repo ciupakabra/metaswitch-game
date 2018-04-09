@@ -7,7 +7,24 @@ class Server extends Node {
 		this.connected_servers = 0;
 		this.connected_cities = 0;
 		this.connected_resources = 0;
-		spriteInit(this);
+		graphicsManager.spriteInitNode(this);
+	}
+
+	info() {
+		return "Type: server\n" + 
+			"Can connect to:\n" + 
+			String(this.max_servers - this.connected_servers) + " servers\n" + 
+			String(this.max_cities - this.connected_cities) + " cities\n" + 
+			String(this.max_resources - this.connected_resources) + " resources\n";
+	}
+
+	connect_with(node) {
+		if (node instanceof Server)
+			this.connected_servers++;
+		else if (node instanceof City)
+			this.connected_cities++;
+		else if (node instanceof Resource)
+			this.connected_resources++;
 	}
 
 	process_packet(packet) {

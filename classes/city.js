@@ -3,21 +3,29 @@ class City extends Node {
 		super(network, x, y);
 		this.seed = Random.engines.mt19937().autoSeed();
 		this.p = p;
-		this.poisson_distro = Prob.poisson(lambda);
-		this.next_packet_cd = this.poisson_distro.apply(this.seed);
-		this.coins = 0;
-		spriteInit(this);
+		this.exp_distro = Prob.exponential(lambda);
+		//this.next_packet_cd = this.poisson_distro.apply(this.seed);
+		this.newTimer();
+		graphicsManager.spriteInitNode(this);
+	}
+
+	info() { // Gotta change this
+		var ret = "Type: city\n";
+
+		for (var i = 0;i < this.p.length;++i) {
+			ret += String(100 * this.p[i]["prob"]) + "% of " + String(this.p[i]["resource_unit"]["type"]) + "\n";
+		}
+
+		return ret;
 	}
 
 	process_packet(packet) {
-		if (!packet.state) {
-			this.network.delete_packet(packet);
-		}
+		this.network.delete_packet(packet);
 		if (packet.destination != this)
 			return false;
 		
 		if (packet.state) {
-			this.coins += packet.content.reward;
+			currentCredit += packet.content.reward;
 			return true;
 		}
 		
@@ -40,20 +48,22 @@ class City extends Node {
 		return this.p[idx]["resource_unit"];
 	}
 
-	update() {
-		this.next_packet_cd--;
+	newTimer() {
+		this.nextTime = Phaser.Timer.SECOND * this.exp_distro.apply(this.seed);
+		game.time.events.add(
+			this.nextTime,
+			this.create_request,
+			this
+		);
+	}
 
-		if (this.next_packet_cd == 0) {
-			var req_unit = this.draw_request();
-			var new_packet = new Packet(this, req_unit, null, req_unit.timeout);
-			this.network.add_packet(new_packet);
-			var res = this.network.get_nearest_resource(this, req_unit);
-			var cable = this.network.get_cable(this, res);
-			cable.send_packet(this, new_packet);
-			this.next_packet_cd = this.poisson_distro.apply(this.seed);
-		}
-		var ret = this.coins;
-		this.coins = 0;
-		return ret;
+	create_request() {
+		var req_unit = this.draw_request();
+		var new_packet = new Packet(this, req_unit, null, req_unit.timeout);
+		this.network.add_packet(new_packet);
+		var res = this.network.get_nearest_resource(this, req_unit);
+		var cable = this.network.get_cable(this, res);
+		cable.send_packet(this, new_packet);
+		this.newTimer();
 	}
 }

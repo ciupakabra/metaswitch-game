@@ -6,11 +6,10 @@ class Node {
 		this.cables = [];
 	}
 
-	dist(node) {
-		return Math.sqrt((this.x - node.x)**2 + (this.y - node.y)**2);
+	connect_with(node) {
 	}
 
-	update() {
-		return 0;
+	dist(node) {
+		return Math.sqrt((this.x - node.x)**2 + (this.y - node.y)**2);
 	}
 }
