@@ -89,7 +89,7 @@ function create() {
 	}
 
 	game.input.mouse.mouseWheelCallback = mouseWheel;
-	game.stage.backgroundColor = 0x000000;
+	game.stage.backgroundColor = 0x111111;
 
 	createPanels();
 
