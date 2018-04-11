@@ -3,8 +3,11 @@ class GraphicsManager {
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
+<<<<<<< HEAD
 		node.graphics = game.add.graphics(node.x, node.y);
 		node.graphicsGroup.add(node.graphics);
+=======
+>>>>>>> 42628769f20190450c9a85ce5c011335c1501833
 
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
@@ -188,7 +191,7 @@ function mouseOutListener(sprite) {
 
 function mouseClickListener(sprite) {
 	if (!sprite.node.clicked) {
-		sprite.node.sillhouette.tint = 0x000000;
+		sprite.node.sillhouette.tint = 0xffff00;
 		sprite.node.sillhouette.visible = true;
 		sprite.node.clicked = true;
 	} else {
