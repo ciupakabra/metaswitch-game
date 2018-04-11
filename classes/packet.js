@@ -5,6 +5,9 @@ class Packet {
 		this.content = content;
 		this.state = true; // true for alive, i.e. timeleft >= 0, false for dead
 		this.delivered = false;
+		this.travelling = false;
+		this.id = packetCount;
+		packetCount++;
 
 		game.time.events.add(
 			Phaser.Timer.SECOND * time,
@@ -14,9 +17,15 @@ class Packet {
 	}
 
 	die() {
+		if (this.delivered)
+			return;
+
 		this.state = false;
 		currentPenalty++;
 
-		graphicsManager.deadPacket(this);
+		deadPackets.push(this.id);
+
+		if (this.travelling)
+			graphicsManager.deadPacket(this);
 	}
 }

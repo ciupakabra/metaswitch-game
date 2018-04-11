@@ -6,14 +6,15 @@ class City extends Node {
 		this.exp_distro = Prob.exponential(lambda);
 		//this.next_packet_cd = this.poisson_distro.apply(this.seed);
 		this.newTimer();
-		graphicsManager.spriteInitNode(this);
+		this.waitingPool = [];
+		graphicsManager.spriteInitCity(this);
 	}
 
 	info() { // Gotta change this
 		var ret = "Type: city\n";
 
 		for (var i = 0;i < this.p.length;++i) {
-			ret += String(100 * this.p[i]["prob"]) + "% of " + String(this.p[i]["resource_unit"]["type"]) + "\n";
+			ret += String(100 * this.p[i]["prob"]) + "% of " + this.p[i]["resource_unit"].color.toString(16) + "\n";
 		}
 
 		return ret;
@@ -25,6 +26,7 @@ class City extends Node {
 			return false;
 		
 		if (packet.state) {
+			packet.delivered = true;
 			currentCredit += packet.content.reward;
 			return true;
 		}
@@ -57,13 +59,33 @@ class City extends Node {
 		);
 	}
 
+	releaseWaitingPool() {
+		var tmp = [];
+		while (this.waitingPool.length > 0) {
+			var packet = this.waitingPool.shift();
+			var res = this.network.get_nearest_resource(this, packet.destination);
+			if (res == null)
+				tmp.push(packet);
+			else {
+				var cable = this.network.get_cable(this, res);
+				cable.send_packet(this, packet);
+			}
+		}
+
+		this.waitingPool = tmp;
+	}
+
 	create_request() {
 		var req_unit = this.draw_request();
 		var new_packet = new Packet(this, req_unit, null, req_unit.timeout);
 		this.network.add_packet(new_packet);
 		var res = this.network.get_nearest_resource(this, req_unit);
-		var cable = this.network.get_cable(this, res);
-		cable.send_packet(this, new_packet);
+		if (res == null) {
+			this.waitingPool.push(new_packet);
+		} else {
+			var cable = this.network.get_cable(this, res);
+			cable.send_packet(this, new_packet);
+		}
 		this.newTimer();
 	}
 }

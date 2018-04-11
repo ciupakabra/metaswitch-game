@@ -12,7 +12,7 @@ class Resource extends Node {
 		super(network, x, y);
 		this.resource_unit = resource_unit;
 		this.color = this.resource_unit.color;
-		graphicsManager.spriteInitNode(this);
+		graphicsManager.spriteInitResource(this);
 	}
 
 	info() {

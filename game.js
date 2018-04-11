@@ -31,10 +31,13 @@ var worldScale = 1;
 var gameGroup;
 var slickUI;
 var graphicsManager;
+var worldGenerator;
 
 // Game vars
 var currentCredit = 500;
 var currentPenalty = 0;
+var packetCount = 0;
+var deadPackets = [];
 
 function preload() {
 	this.load.image('server', 'assets/piskel/Server.png');
@@ -75,10 +78,18 @@ function createPanels() {
 }
 
 function create() {
+	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
-	// Element groups
-	uiGroup = game.add.group();
+
 	gameGroup = game.add.group();
+
+	//var boundsCircle = game.make.graphics();
+	//boundsCircle.beginFill(0x000000);
+	//boundsCircle.drawCircle(0, 0,2 * BOUND_RADIUS);
+	//gameGroup.add(boundsCircle);
+	
+	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
+	game.input.mouse.capture = true;
 
 	function mouseWheel(event) {
 		if (game.input.mouse.wheelDelta == -1) {
@@ -95,89 +106,9 @@ function create() {
 
 	createPanels();
 
-	game.world.setBounds(-1000,-1000,2000,2000);
-	game.camera.x = -400;
-	game.camera.y = -300;
-
-	game.input.mouse.capture = true;
-
 	network = new Network();
 
-	resource_unit1 = new ResourceUnit(1, 10, 15, RESOURCE_COLORS[0]);
-	resource_unit2 = new ResourceUnit(2, 10, 15, RESOURCE_COLORS[1]);
-	resource_unit3 = new ResourceUnit(3, 10, 15, RESOURCE_COLORS[2]);
-
-	resource1 = new Resource(network, 0 * scale, 0 * scale, resource_unit1);
-	resource2 = new Resource(network, 5 * scale, 5 * scale, resource_unit2);
-	resource3 = new Resource(network, 2 * scale, 3 * scale, resource_unit3);
-
-	network.add_node(resource1);
-	network.add_node(resource2);
-	network.add_node(resource3);
-
-	function make_probs(ps) {
-		var ret = [];
-		for (var i = 0;i < ps.length;++i) {
-			ret.push({
-				"prob": ps[i][0],
-				"resource_unit": ps[i][1],
-			});
-		}
-		return ret;
-	}
-
-	distro_1 = make_probs([
-		[0.2, resource_unit1],
-		[0.3, resource_unit2],
-		[0.5, resource_unit3],
-	]);
-
-	distro_2 = make_probs([
-		[0.3, resource_unit1],
-		[0.3, resource_unit2],
-		[0.4, resource_unit3],
-	]);
-
-	distro_3 = make_probs([
-		[0.3, resource_unit2],
-		[0.7, resource_unit3],
-	]);
-
-	city1 = new City(network, 5 * scale, -7 * scale, 0.5, distro_1);
-	city2 = new City(network, -4 * scale, 0 * scale, 0.25, distro_2);
-	city3 = new City(network, 0 * scale, 10 * scale, 0.6, distro_3);
-
-	network.add_node(city1);
-	network.add_node(city2);
-	network.add_node(city3);
-
-	server1 = new Server(network, 0 * scale, 5 * scale, 3, 3, 3, game);
-	server2 = new Server(network, 3 * scale, 0 * scale, 3, 3, 3, game);
-
-	network.add_node(server1);
-	network.add_node(server2);
-
-	cable1_c2 = new Cable(network, server1, city2, 0.5, 60);
-	cable1_c3 = new Cable(network, server1, city3, 0.5, 60);
-	cable1_r1 = new Cable(network, server1, resource1, 0.5, 60);
-	cable1_r2 = new Cable(network, server1, resource2, 0.5, 60);
-	cable1_r3 = new Cable(network, server1, resource3, 0.5, 60);
-
-	network.add_cable(cable1_c2);
-	network.add_cable(cable1_c3);
-	network.add_cable(cable1_r1);
-	network.add_cable(cable1_r2);
-	network.add_cable(cable1_r3);
-
-	cable2_c1 = new Cable(network, server2, city1, 0.5, 40);
-	cable2_r1 = new Cable(network, server2, resource1, 0.5, 40);
-	cable2_r2 = new Cable(network, server2, resource2, 0.5, 40);
-	cable2_r3 = new Cable(network, server2, resource3, 0.5, 40);
-
-	network.add_cable(cable2_c1);
-	network.add_cable(cable2_r1);
-	network.add_cable(cable2_r2);
-	network.add_cable(cable2_r3);
+	worldGenerator.initGameWorld();
 }
 
 function update() {

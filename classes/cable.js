@@ -48,6 +48,7 @@ class Cable {
 
 			var packet = this.B1.shift();
 
+			packet.travelling = true;
 			graphicsManager.spriteInitPacket(packet, this, this.node_1, this.node_2); 
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 1, true);
@@ -59,6 +60,7 @@ class Cable {
 
 			var packet = this.B2.shift();
 
+			packet.travelling = true;
 			graphicsManager.spriteInitPacket(packet, this, this.node_2, this.node_1); 
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);

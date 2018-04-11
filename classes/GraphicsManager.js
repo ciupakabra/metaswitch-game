@@ -1,75 +1,85 @@
 class GraphicsManager {
 	constructor() {}
 
-	spriteInitNode(node) {
-		if (node instanceof Server) {
-			node.sprite = gameGroup.create(node.x, node.y, 'server');
-		} else if (node instanceof City) {
-			node.sprite = gameGroup.create(node.x, node.y, 'city');
-		} else if (node instanceof Resource) {
-			node.sprite = gameGroup.create(node.x, node.y, 'resource');
-			node.sprite.tint = node.color;
-		}
-
-		node.sillhouette = gameGroup.create(node.x, node.y, this.createSillhouette(node.sprite.key));
-		node.sillhouette.scale.set(1.1);
-		node.sillhouette.anchor.set(0.5, 0.5);
-		node.sillhouette.tint = 0xfffab0;
-		node.sillhouette.visible = false;
-		gameGroup.bringToTop(node.sprite);
-
-
+	spriteInitServer(node) {
+		node.graphicsGroup = game.add.group(gameGroup);
+		
+		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
 		node.sprite.inputEnabled = true;
-
+		node.sprite.node = node;
+		this.createSillhouette(node);
 		node.clicked = false;
 
-		node.sprite.events.onInputOver.add(function(sprite) {
-			if (!sprite.node.clicked) {
-				sprite.node.sillhouette.tint = 0xfffab0;
-				sprite.node.sillhouette.visible = true;
-			}
+		node.sprite.events.onInputOver.add(mouseOverListener);
+		node.sprite.events.onInputOut.add(mouseOutListener);
+		node.sprite.events.onInputDown.add(mouseClickListener);
+	}
 
-			nodeInfoOverListener(sprite.node);
-		});
+	spriteInitResource(node) {
+		node.graphicsGroup = game.add.group(gameGroup);
 
-		node.sprite.events.onInputOut.add(function(sprite) {
-			if (!sprite.node.clicked) {
-				sprite.node.sillhouette.visible = false;
-			}
-
-			nodeInfoOutListener();
-		});
-
-		node.sprite.events.onInputDown.add(function(sprite) {
-			if (!sprite.node.clicked) {
-				sprite.node.sillhouette.tint = 0x000000;
-				sprite.node.sillhouette.visible = true;
-				sprite.node.clicked = true;
-			} else {
-				sprite.node.sillhouette.visible = false
-				sprite.node.clicked = false;
-			}
-
-			nodeInfoClickListener();
-			shopNodeClickListener(sprite.node);
-		});
-
+		node.sprite = node.graphicsGroup.create(node.x, node.y, 'resource');
+		node.sprite.tint = node.color;
+		node.sprite.anchor.set(0.5, 0.5);
+		node.sprite.inputEnabled = true;
 		node.sprite.node = node;
+		this.createSillhouette(node);
+		node.clicked = false;
+
+		node.sprite.events.onInputOver.add(mouseOverListener);
+		node.sprite.events.onInputOut.add(mouseOutListener);
+		node.sprite.events.onInputDown.add(mouseClickListener);
+	}
+
+	spriteInitCity(node) {
+		node.graphicsGroup = game.add.group(gameGroup);
+
+		node.sprite = node.graphicsGroup.create(node.x, node.y, 'city');
+		node.sprite.anchor.set(0.5, 0.5);
+		node.sprite.inputEnabled = true;
+		node.sprite.node = node;
+		this.createSillhouette(node);
+		node.clicked = false;
+
+		node.graphics = game.add.graphics(node.x, node.y);
+		var sum = 0;
+		for (var i = 0;i < node.p.length;++i) {
+			if (node.p[i]["prob"] > 0) {
+				node.graphics.lineStyle(6, node.p[i]["resource_unit"]["color"]);
+				var angleFrom = game.math.degToRad(360 * sum + 5);
+				var angleTo = game.math.degToRad(360 * (sum + node.p[i]["prob"]) - 5);
+				node.graphics.arc(0, 0, 50, angleFrom, angleTo, false);
+				sum += node.p[i]["prob"];
+			}
+		}
+		node.graphicsGroup.add(node.graphics);
+
+		node.sprite.events.onInputOver.add(mouseOverListener);
+		node.sprite.events.onInputOut.add(mouseOutListener);
+		node.sprite.events.onInputDown.add(mouseClickListener);
 	}
 
 	spriteInitCable(cable) {
-		cable.line = new Phaser.Line(cable.node_1.x, cable.node_1.y, cable.node_2.x, cable.node_2.y);
-
 		cable.graphics = game.make.graphics();
-		cable.graphics.lineStyle(1, 0xffffff, 1);
-		cable.graphics.moveTo(cable.line.start.x, cable.line.start.y);
-		cable.graphics.lineTo(cable.line.end.x, cable.line.end.y);
+		cable.graphics.lineStyle(1, 0xffffff);
+		cable.graphics.moveTo(cable.node_1.x, cable.node_1.y);
+		cable.graphics.lineTo(cable.node_2.x, cable.node_2.y);
 		cable.graphics.endFill();
 
+		cable.graphics.inputEnabled = true;
+
+		cable.graphics.events.onInputOver.add(function() {
+			this.alpha = 0.5;
+		}, cable.graphics);
+
+		cable.graphics.events.onInputOut.add(function() {
+			this.alpha = 1.0;
+		}, cable.graphics);
+
 		gameGroup.add(cable.graphics);
-		cable.node_1.sprite.bringToTop();
-		cable.node_2.sprite.bringToTop();
+		game.world.bringToTop(cable.node_1.graphicsGroup);
+		game.world.bringToTop(cable.node_2.graphicsGroup);
 	}
 
 	spriteInitPacket(packet, cable, node_from, node_to) {
@@ -91,7 +101,7 @@ class GraphicsManager {
 		}
 
 		if (!packet.state)
-			deadPacket(packet);
+			this.deadPacket(packet);
 
 		gameGroup.add(packet.sprite);
 		node_from.sprite.bringToTop();
@@ -105,6 +115,7 @@ class GraphicsManager {
 			true
 		);
 		tween.onComplete.add(function() {
+			this.travelling = false;
 			this.sprite.destroy();
 		}, packet, 1);
 
@@ -116,18 +127,56 @@ class GraphicsManager {
 	}
 
 	deadPacket(packet) {
-		packet.sprite.tint = 0x202020;
+		packet.sprite.tint = 0x000000;
 	}
 
-	createSillhouette(source) {
+	createSillhouette(node) {
 		var bmd = game.make.bitmapData()
-		bmd.load(source);
+		bmd.load(node.sprite.key);
 		bmd.processPixelRGB(function(pixel) {
 			pixel.r = 255;
 			pixel.g = 255;
 			pixel.b = 255;
 			return pixel;
 		});
-		return bmd;
+
+		node.sillhouette = node.graphicsGroup.create(node.x, node.y, bmd);
+		node.sillhouette.scale.set(1.05);
+		node.sillhouette.anchor.set(0.5, 0.5);
+		node.sillhouette.tint = 0xfffab0;
+		node.sillhouette.visible = false;
+
+		node.graphicsGroup.bringToTop(node.sprite);
 	}
+}
+
+function mouseOverListener(sprite) {
+	if (!sprite.node.clicked) {
+		sprite.node.sillhouette.tint = 0xfffab0;
+		sprite.node.sillhouette.visible = true;
+	}
+
+	nodeInfoOverListener(sprite.node);
+}
+
+function mouseOutListener(sprite) {
+	if (!sprite.node.clicked) {
+		sprite.node.sillhouette.visible = false;
+	}
+
+	nodeInfoOutListener();
+}
+
+function mouseClickListener(sprite) {
+	if (!sprite.node.clicked) {
+		sprite.node.sillhouette.tint = 0x000000;
+		sprite.node.sillhouette.visible = true;
+		sprite.node.clicked = true;
+	} else {
+		sprite.node.sillhouette.visible = false
+		sprite.node.clicked = false;
+	}
+
+	nodeInfoClickListener();
+	shopNodeClickListener(sprite.node);
 }
