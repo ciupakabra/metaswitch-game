@@ -17,6 +17,8 @@ var RESOURCE_COLORS = [
 	0x235789,
 ]
 
+var BGCOL = 0x111111;
+
 var SHOP_WIDTH = 200;
 
 var game = new Phaser.Game(config);
@@ -35,9 +37,9 @@ var currentCredit = 500;
 var currentPenalty = 0;
 
 function preload() {
-	this.load.image('server', 'assets/server_new.png');
-	this.load.image('resource', 'assets/resource_new.png');
-	this.load.image('city', 'assets/city_new.png');
+	this.load.image('server', 'assets/piskel/Server.png');
+	this.load.image('resource', 'assets/piskel/Resource.png');
+	this.load.image('city', 'assets/piskel/City.png');
 	this.load.image('packet', 'assets/packet.png');
 	cursors = game.input.keyboard.createCursorKeys();
 	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
@@ -199,5 +201,5 @@ function updateCamera() {
 }
 
 function render() {
-	game.debug.pointer(game.input.activePointer);
+	//game.debug.pointer(game.input.activePointer);
 }
