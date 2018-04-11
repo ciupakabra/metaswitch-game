@@ -3,7 +3,7 @@ class GraphicsManager {
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
-		
+
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
 		node.sprite.inputEnabled = true;
@@ -169,7 +169,7 @@ function mouseOutListener(sprite) {
 
 function mouseClickListener(sprite) {
 	if (!sprite.node.clicked) {
-		sprite.node.sillhouette.tint = 0x000000;
+		sprite.node.sillhouette.tint = 0xffff00;
 		sprite.node.sillhouette.visible = true;
 		sprite.node.clicked = true;
 	} else {
