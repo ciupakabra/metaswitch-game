@@ -50,6 +50,18 @@ class GraphicsManager {
 			node.sprite = gameGroup.create(node.x, node.y, 'server');
 		} else if (node instanceof City) {
 			node.sprite = gameGroup.create(node.x, node.y, 'city');
+
+			node.graphics = game.add.graphics(node.x, node.y);
+			var sum = 0;
+			for (var i = 0;i < node.p.length;++i) {
+				if (node.p[i]["prob"] > 0) {
+					node.graphics.lineStyle(6, node.p[i]["resource_unit"]["color"]);
+					node.graphics.arc(0, 0, 50, game.math.degToRad(360*sum+5), game.math.degToRad(360*(sum+node.p[i]["prob"]) - 5), false);
+					sum += node.p[i]["prob"];
+				}
+		  }
+			gameGroup.add(node.graphics);
+
 		} else if (node instanceof Resource) {
 			node.sprite = gameGroup.create(node.x, node.y, 'resource');
 			node.sprite.tint = node.color;
