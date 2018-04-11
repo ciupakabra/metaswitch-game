@@ -89,7 +89,7 @@ function create() {
 	}
 
 	game.input.mouse.mouseWheelCallback = mouseWheel;
-	game.stage.backgroundColor = '#9BC53D';
+	game.stage.backgroundColor = 0x000000;
 
 	createPanels();
 
@@ -187,10 +187,10 @@ function update() {
 }
 
 function updateCamera() {
-	if (game.input.activePointer.isDown) {	
+	if (game.input.activePointer.isDown) {
 		if (game.origDragPoint) {
-			gameGroup.x -= game.origDragPoint.x - game.input.activePointer.position.x;		
-			gameGroup.y -= game.origDragPoint.y - game.input.activePointer.position.y;	
+			gameGroup.x -= game.origDragPoint.x - game.input.activePointer.position.x;
+			gameGroup.y -= game.origDragPoint.y - game.input.activePointer.position.y;
 		}
 		game.origDragPoint = game.input.activePointer.position.clone();
 	} else {

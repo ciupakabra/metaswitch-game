@@ -62,7 +62,7 @@ class GraphicsManager {
 		cable.line = new Phaser.Line(cable.node_1.x, cable.node_1.y, cable.node_2.x, cable.node_2.y);
 
 		cable.graphics = game.make.graphics();
-		cable.graphics.lineStyle(2, 0x780116, 1);
+		cable.graphics.lineStyle(1, 0xffffff, 1);
 		cable.graphics.moveTo(cable.line.start.x, cable.line.start.y);
 		cable.graphics.lineTo(cable.line.end.x, cable.line.end.y);
 		cable.graphics.endFill();
@@ -99,9 +99,9 @@ class GraphicsManager {
 
 		var time = Phaser.Timer.SECOND * cable.total_time();
 		var tween = game.add.tween(packet.sprite).to(
-			{x : node_to.x, y : node_to.y}, 
-			time, 
-			Phaser.Easing.Linear.NONE, 
+			{x : node_to.x, y : node_to.y},
+			time,
+			Phaser.Easing.Linear.NONE,
 			true
 		);
 		tween.onComplete.add(function() {
