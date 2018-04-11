@@ -17,6 +17,8 @@ var RESOURCE_COLORS = [
 	0x235789,
 ]
 
+var BGCOL = 0x111111;
+
 var SHOP_WIDTH = 200;
 
 var game = new Phaser.Game(config);
@@ -38,9 +40,9 @@ var packetCount = 0;
 var deadPackets = [];
 
 function preload() {
-	this.load.image('server', 'assets/server_new.png');
-	this.load.image('resource', 'assets/resource_new.png');
-	this.load.image('city', 'assets/city_new.png');
+	this.load.image('server', 'assets/piskel/Server.png');
+	this.load.image('resource', 'assets/piskel/Resource.png');
+	this.load.image('city', 'assets/piskel/City.png');
 	this.load.image('packet', 'assets/packet.png');
 	cursors = game.input.keyboard.createCursorKeys();
 	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
@@ -100,7 +102,7 @@ function create() {
 	}
 
 	game.input.mouse.mouseWheelCallback = mouseWheel;
-	game.stage.backgroundColor = '#9BC53D';
+	game.stage.backgroundColor = 0x111111;
 
 	createPanels();
 
@@ -118,10 +120,10 @@ function update() {
 }
 
 function updateCamera() {
-	if (game.input.activePointer.isDown) {	
+	if (game.input.activePointer.isDown) {
 		if (game.origDragPoint) {
-			gameGroup.x -= game.origDragPoint.x - game.input.activePointer.position.x;		
-			gameGroup.y -= game.origDragPoint.y - game.input.activePointer.position.y;	
+			gameGroup.x -= game.origDragPoint.x - game.input.activePointer.position.x;
+			gameGroup.y -= game.origDragPoint.y - game.input.activePointer.position.y;
 		}
 		game.origDragPoint = game.input.activePointer.position.clone();
 	} else {
@@ -130,5 +132,5 @@ function updateCamera() {
 }
 
 function render() {
-	game.debug.pointer(game.input.activePointer);
+	//game.debug.pointer(game.input.activePointer);
 }
