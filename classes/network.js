@@ -94,6 +94,22 @@ class Network {
 		return true;
 	}
 
+	packetsInNode(node) {
+		var ret = 0;
+
+		if (node instanceof City)
+			ret += node.waitingPool.length;
+
+		for (var i = 0;i < this.cables.length;++i) {
+			if (this.cables[i].node_1 == node) {
+				ret += this.cables[i].B1.length;
+			} else if (this.cables[i].node_2 == node) {
+				ret += this.cables[i].B2.length;
+			}
+		}
+
+		return ret;
+	}
 	// Logic for connecting nodes
 	can_connect(node1, node2) {
 		var idx1 = this.nodes.indexOf(node1);

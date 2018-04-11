@@ -86,6 +86,7 @@ class City extends Node {
 			var cable = this.network.get_cable(this, res);
 			cable.send_packet(this, new_packet);
 		}
+		graphicsManager.arcUpdate(this);
 		this.newTimer();
 	}
 }

@@ -69,7 +69,7 @@ class GraphicsManager {
 
 	arcUpdate(node) {
 		var nodeSpace = 50;
-		var angleTo = Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
+		var angleTo = Math.min(360 * network.packetsInNode(node)/nodeSpace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
 		node.graphics.destroy();
 		node.graphics = game.add.graphics(node.x, node.y);
@@ -141,8 +141,10 @@ class GraphicsManager {
 
 		// We add a dummy function to lose the two arguments
 		// that onComplete adds.
+		this.arcUpdate(node_from);
 		tween.onComplete.add(function(d1, d2, node_to, packet) {
 			node_to.process_packet(packet);
+			this.arcUpdate(node_to);
 		}, this, 0, node_to, packet);
 	}
 

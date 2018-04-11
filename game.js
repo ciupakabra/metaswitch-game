@@ -45,6 +45,8 @@ function preload() {
 	this.load.image('city', 'assets/piskel/City.png');
 	this.load.image('packet', 'assets/packet.png');
 	cursors = game.input.keyboard.createCursorKeys();
+
+	// Leave this at the bottom of the method
 	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
 	slickUI.load('assets/ui/kenney/kenney.json');
 }
