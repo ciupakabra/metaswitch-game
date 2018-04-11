@@ -3,7 +3,9 @@ class GraphicsManager {
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
-		
+		node.graphics = game.add.graphics(node.x, node.y);
+		node.graphicsGroup.add(node.graphics);
+
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
 		node.sprite.inputEnabled = true;
@@ -18,6 +20,8 @@ class GraphicsManager {
 
 	spriteInitResource(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
+		node.graphics = game.add.graphics(node.x, node.y);
+		node.graphicsGroup.add(node.graphics);
 
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'resource');
 		node.sprite.tint = node.color;
@@ -34,6 +38,8 @@ class GraphicsManager {
 
 	spriteInitCity(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
+		node.graphics = game.add.graphics(node.x, node.y);
+		node.graphicsGroup.add(node.graphics);
 
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'city');
 		node.sprite.anchor.set(0.5, 0.5);
@@ -42,22 +48,35 @@ class GraphicsManager {
 		this.createSillhouette(node);
 		node.clicked = false;
 
-		node.graphics = game.add.graphics(node.x, node.y);
+		var graphics = game.add.graphics(node.x, node.y);
 		var sum = 0;
 		for (var i = 0;i < node.p.length;++i) {
 			if (node.p[i]["prob"] > 0) {
-				node.graphics.lineStyle(6, node.p[i]["resource_unit"]["color"]);
+				graphics.lineStyle(6, node.p[i]["resource_unit"]["color"]);
 				var angleFrom = game.math.degToRad(360 * sum + 5);
 				var angleTo = game.math.degToRad(360 * (sum + node.p[i]["prob"]) - 5);
-				node.graphics.arc(0, 0, 50, angleFrom, angleTo, false);
+				graphics.arc(0, 0, 50, angleFrom, angleTo, false);
 				sum += node.p[i]["prob"];
 			}
 		}
-		node.graphicsGroup.add(node.graphics);
+		node.graphicsGroup.add(graphics);
 
 		node.sprite.events.onInputOver.add(mouseOverListener);
 		node.sprite.events.onInputOut.add(mouseOutListener);
 		node.sprite.events.onInputDown.add(mouseClickListener);
+	}
+
+	arcUpdate(node) {
+		var nodeSpace = 50;
+		Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
+		node.graphicsGroup.remove(node.graphics);
+		node.graphics.destroy();
+		node.graphics = game.add.graphics(node.x, node.y);
+		node.graphicsGroup.add(node.graphics);
+		var r = "0" + (Math.ceil(255*angleTo/360)).toString(16)
+		var g = "0" + (Math.ceil(255*(360-angleTo)/360)).toString(16)
+		node.graphics.lineStyle(6, '0x' + r.slice(-2) + g.slice(-2) + '00');
+		node.graphics.arc(0, 0, 40, 0, game.math.degToRad(360 - angleTo), true);
 	}
 
 	spriteInitCable(cable) {
