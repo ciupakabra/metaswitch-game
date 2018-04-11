@@ -3,7 +3,7 @@ class GraphicsManager {
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
-		
+
 		node.graphics = game.add.graphics(node.x, node.y);
 		node.graphicsGroup.add(node.graphics);
 
@@ -69,7 +69,7 @@ class GraphicsManager {
 
 	arcUpdate(node) {
 		var nodeSpace = 50;
-		// Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
+		var angleTo = Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
 		node.graphics.destroy();
 		node.graphics = game.add.graphics(node.x, node.y);
