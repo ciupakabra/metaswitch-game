@@ -3,11 +3,9 @@ class GraphicsManager {
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
-<<<<<<< HEAD
+		
 		node.graphics = game.add.graphics(node.x, node.y);
 		node.graphicsGroup.add(node.graphics);
-=======
->>>>>>> 42628769f20190450c9a85ce5c011335c1501833
 
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
@@ -71,7 +69,7 @@ class GraphicsManager {
 
 	arcUpdate(node) {
 		var nodeSpace = 50;
-		Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
+		// Math.min(360 * network.packetsInNode(node)/nodespace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
 		node.graphics.destroy();
 		node.graphics = game.add.graphics(node.x, node.y);
