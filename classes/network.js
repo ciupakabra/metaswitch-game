@@ -22,6 +22,16 @@ class Network {
 		this.packets.splice(idx, 1);
 		return true;
 	}
+
+	get_cables(node) {
+		var ret = [];
+
+		for (var i = 0;i < this.cables.length;++i)
+			if (this.cables[i].node_1 == node || this.cables[i].node_2 == node)
+				ret.push(this.cables[i]);
+		
+		return ret;
+	}
 	
 	update_distances() {
 		for (var i = 0;i < this.nodes.length;++i) {
@@ -42,10 +52,15 @@ class Network {
 		queue.enqueue(0, source);
 		while (!queue.isEmpty()) {
 			var v = queue.dequeue();
-			
+
 			if (visited[v])
 				continue;
+
+			if (!(this.nodes[v] instanceof Server) && v != source)
+				continue;
+
 			visited[v] = true;
+
 			for (var i = 0;i < this.adjacency_lists[v].length;++i) {
 				var u = this.adjacency_lists[v][i][0];
 				var edge = this.adjacency_lists[v][i][1];
@@ -86,8 +101,10 @@ class Network {
 
 		if (node1 == node2)
 			return false;
-		if (this.adjacency_lists[idx1].includes(idx2))
-			return false;
+
+		for (var i = 0;i < this.adjacency_lists[idx1].length;++i)
+			if (this.adjacency_lists[idx1][i][0] == idx2)
+				return false;
 		if (!(node1 instanceof Server) && !(node2 instanceof Server))
 			return false;
 
@@ -135,6 +152,11 @@ class Network {
 			this.adjacency_lists[idx_1].push([idx_2, cable]);
 			this.adjacency_lists[idx_2].push([idx_1, cable]);
 			this.update_distances();
+
+			for (var i = 0;i < this.nodes.length;++i)
+				if (this.nodes[i] instanceof City)
+					this.nodes[i].releaseWaitingPool();
+
 			return true;
 		}
 		return false;
@@ -164,6 +186,7 @@ class Network {
 				}
 			}
 		}
+
 		return nearest;
 	}
 }

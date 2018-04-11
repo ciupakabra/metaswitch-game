@@ -1,6 +1,50 @@
 class GraphicsManager {
 	constructor() {}
 
+	renderServerGraphics(server) {
+		var cables = network.get_cables(server);
+
+		var packets = [];
+
+		for (var i = 0;i < cables.length;++i) {
+			if (cables[i].node_1 == server) { packets.concat(cables[i].B1);
+			} else {
+				packets.concat(cables[i].B2);
+			}
+		}
+
+		var colors = {};
+
+		for (var i = 0;i < packets.length;++i) {
+			var color = Phaser.Color.blendAverage(packets[i].sprite.color, packets[i].sprite.tint);
+
+			if (!(color in colors)) {
+				colors[color] = 1;
+			} else {
+				colors[color]++;
+			}
+		}
+
+		var fromX = -20;
+		var width = 40;
+		var y = -19;
+
+		var graphics = game.make.graphics(server.x, server.y);
+		
+		graphics.beginFill(0x000000);
+		graphics.drawRect(-25, -25, 50, 50);
+		graphics.beginFill(0xffffff);
+		graphics.drawRect(-20, -20, 40, 40);
+
+		for (var key in colors) {
+			graphics.beginFill(key);
+			graphics.drawRect(fromX, y, width, colors[key]);
+			y += colors[key];
+		}
+		
+		return graphics;
+	}
+
 	spriteInitNode(node) {
 		if (node instanceof Server) {
 			node.sprite = gameGroup.create(node.x, node.y, 'server');
@@ -17,7 +61,6 @@ class GraphicsManager {
 		node.sillhouette.tint = 0xfffab0;
 		node.sillhouette.visible = false;
 		gameGroup.bringToTop(node.sprite);
-
 
 		node.sprite.anchor.set(0.5, 0.5);
 		node.sprite.inputEnabled = true;
@@ -59,13 +102,21 @@ class GraphicsManager {
 	}
 
 	spriteInitCable(cable) {
-		cable.line = new Phaser.Line(cable.node_1.x, cable.node_1.y, cable.node_2.x, cable.node_2.y);
-
 		cable.graphics = game.make.graphics();
-		cable.graphics.lineStyle(2, 0x780116, 1);
-		cable.graphics.moveTo(cable.line.start.x, cable.line.start.y);
-		cable.graphics.lineTo(cable.line.end.x, cable.line.end.y);
+		cable.graphics.lineStyle(4, 0x780116);
+		cable.graphics.moveTo(cable.node_1.x, cable.node_1.y);
+		cable.graphics.lineTo(cable.node_2.x, cable.node_2.y);
 		cable.graphics.endFill();
+
+		cable.graphics.inputEnabled = true;
+
+		cable.graphics.events.onInputOver.add(function() {
+			this.alpha = 0.5;
+		}, cable.graphics);
+
+		cable.graphics.events.onInputOut.add(function() {
+			this.alpha = 1.0;
+		}, cable.graphics);
 
 		gameGroup.add(cable.graphics);
 		cable.node_1.sprite.bringToTop();
@@ -91,7 +142,7 @@ class GraphicsManager {
 		}
 
 		if (!packet.state)
-			deadPacket(packet);
+			this.deadPacket(packet);
 
 		gameGroup.add(packet.sprite);
 		node_from.sprite.bringToTop();
@@ -105,6 +156,7 @@ class GraphicsManager {
 			true
 		);
 		tween.onComplete.add(function() {
+			this.travelling = false;
 			this.sprite.destroy();
 		}, packet, 1);
 
@@ -116,7 +168,7 @@ class GraphicsManager {
 	}
 
 	deadPacket(packet) {
-		packet.sprite.tint = 0x202020;
+		packet.sprite.tint = 0x000000;
 	}
 
 	createSillhouette(source) {
