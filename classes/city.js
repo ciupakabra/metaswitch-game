@@ -7,7 +7,7 @@ class City extends Node {
 		//this.next_packet_cd = this.poisson_distro.apply(this.seed);
 		this.newTimer();
 		this.waitingPool = [];
-		graphicsManager.spriteInitNode(this);
+		graphicsManager.spriteInitCity(this);
 	}
 
 	info() { // Gotta change this

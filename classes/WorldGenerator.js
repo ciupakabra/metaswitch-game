@@ -79,7 +79,7 @@ class WorldGenerator {
 				if (this.in_circle(points[i], MIN_DIST, point))
 					can_place = false;
 
-			for (var i = 0;(i < old_n && can_place);++i)
+			for (var i = 0;(i < current_points.length && can_place);++i)
 				if (this.in_circle(current_points[i], MIN_DIST, point))
 					can_place = false;
 
@@ -90,7 +90,7 @@ class WorldGenerator {
 		return points;
 	}
 
-	genPointsInfill(n, startAt, current_points=[], around=false) {
+	genPointsInfill(n, startAt, current_points=[], around=false, initial_circle=0.3) {
 		var points = [];
 		var old_n = 0;
 
@@ -101,9 +101,11 @@ class WorldGenerator {
 		var idx = startAt;
 
 		while (points.length < n) {
-			var allowed_radius = (0.3 + 0.7 * Math.min(1, (points.length + old_n) / MAX_N)) * BOUND_RADIUS;
+			var allowed_radius = (initial_circle + (1 - initial_circle) * Math.min(1, (points.length + old_n) / MAX_N)) * BOUND_RADIUS;
+
 			var x = (2 * this.genHaltonMember(idx, 2) - 1) * BOUND_RADIUS;
 			var y = (2 * this.genHaltonMember(idx, 3) - 1) * BOUND_RADIUS;
+
 			idx += 1;
 			if (!this.in_circle([0, 0], allowed_radius, [x, y]))
 				continue;
@@ -161,6 +163,8 @@ class WorldGenerator {
 			3, 
 			1000 + Math.ceil(Math.random() * 1000),
 			this.resources,
+			false,
+			0.4,
 		);
 
 		for (var i = 0;i < this.cities.length;++i) {
