@@ -33,6 +33,16 @@ var slickUI;
 var graphicsManager;
 var worldGenerator;
 
+var fontsReady = false;
+
+//Google fonts
+WebFontConfig = {
+    active: function(){fontsReady = true;},
+    google: {
+      families: ['Lato']
+    }
+};
+
 // Game vars
 var currentCredit = 500;
 var currentPenalty = 0;
@@ -40,6 +50,8 @@ var packetCount = 0;
 var deadPackets = [];
 
 function preload() {
+	//  Load the Google WebFont Loader script
+  game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.image('server', 'assets/piskel/Server.png');
 	this.load.image('resource', 'assets/piskel/Resource.png');
 	this.load.image('city', 'assets/piskel/City.png');
@@ -82,14 +94,14 @@ function createPanels() {
 function create() {
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
-
+  var style = { font: "65px Arial", fill: "#ffffff", align: "center" };
 	gameGroup = game.add.group();
 
 	//var boundsCircle = game.make.graphics();
 	//boundsCircle.beginFill(0x000000);
 	//boundsCircle.drawCircle(0, 0,2 * BOUND_RADIUS);
 	//gameGroup.add(boundsCircle);
-	
+
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
 
