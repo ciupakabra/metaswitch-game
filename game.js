@@ -92,9 +92,10 @@ function createPanels() {
 }
 
 function create() {
+	while(!fontsReady){/*pass*/}
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
-  var style = { font: "65px Arial", fill: "#ffffff", align: "center" };
+  var style = { font: "40px Lato", fill: "#000000"};
 	gameGroup = game.add.group();
 
 	//var boundsCircle = game.make.graphics();
