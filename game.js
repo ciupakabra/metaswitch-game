@@ -107,10 +107,21 @@ function create() {
 	game.input.mouse.capture = true;
 
 	function mouseWheel(event) {
+		var cursorx = (gameGroup.x - game.input.activePointer.position.x)/worldScale;
+		var cursory = (gameGroup.y - game.input.activePointer.position.y)/worldScale;
 		if (game.input.mouse.wheelDelta == -1) {
+			if (worldScale != 0.25) {
+				gameGroup.x -= cursorx * 0.05;
+				gameGroup.y -= cursory * 0.05;
+			}
 			worldScale -= 0.05;
 		} else {
+			if (worldScale != 2) {
+				gameGroup.x += cursorx * 0.05;
+				gameGroup.y += cursory * 0.05;
+			}
 			worldScale += 0.05;
+
 		}
 		worldScale = Phaser.Math.clamp(worldScale, 0.25, 2);
 		gameGroup.scale.set(worldScale);
