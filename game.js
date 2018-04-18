@@ -34,7 +34,7 @@ var graphicsManager;
 var worldGenerator;
 
 var fontsReady = false;
-
+/*
 //Google fonts
 WebFontConfig = {
     active: function(){fontsReady = true;},
@@ -42,7 +42,7 @@ WebFontConfig = {
       families: ['Lato']
     }
 };
-
+*/
 // Game vars
 var currentCredit = 500;
 var currentPenalty = 0;
@@ -51,7 +51,7 @@ var deadPackets = [];
 
 function preload() {
 	//  Load the Google WebFont Loader script
-  game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+  //game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.image('server', 'assets/piskel/Server.png');
 	this.load.image('resource', 'assets/piskel/Resource.png');
 	this.load.image('city', 'assets/piskel/City.png');
@@ -92,10 +92,10 @@ function createPanels() {
 }
 
 function create() {
-	while(!fontsReady){/*pass*/}
+	//while(!fontsReady){/*pass*/}
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
-  var style = { font: "40px Lato", fill: "#000000"};
+  //var style = { font: "40px Lato", fill: "#000000"};
 	gameGroup = game.add.group();
 
 	//var boundsCircle = game.make.graphics();
