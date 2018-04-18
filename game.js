@@ -29,6 +29,11 @@ var speed = 30; // How long before network update (60/speed updates per second)
 var time = 0;
 var worldScale = 1;
 var gameGroup;
+
+var nodes;
+var packets;
+var cables;
+
 var slickUI;
 var graphicsManager;
 var worldGenerator;
@@ -98,6 +103,14 @@ function create() {
   //var style = { font: "40px Lato", fill: "#000000"};
 	gameGroup = game.add.group();
 
+	cables = game.add.group();
+	packets = game.add.group();
+	nodes = game.add.group();
+
+	gameGroup.add(cables);
+	gameGroup.add(packets);
+	gameGroup.add(nodes);
+	
 	//var boundsCircle = game.make.graphics();
 	//boundsCircle.beginFill(0x000000);
 	//boundsCircle.drawCircle(0, 0,2 * BOUND_RADIUS);

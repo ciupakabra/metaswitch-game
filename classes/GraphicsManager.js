@@ -20,7 +20,7 @@ class GraphicsManager {
 	}
 
 	spriteInitResource(node) {
-		node.graphicsGroup = game.add.group(gameGroup);
+		node.graphicsGroup = game.add.group(nodes);
 		node.graphics = game.add.graphics(node.x, node.y);
 		node.graphicsGroup.add(node.graphics);
 
@@ -38,7 +38,7 @@ class GraphicsManager {
 	}
 
 	spriteInitCity(node) {
-		node.graphicsGroup = game.add.group(gameGroup);
+		node.graphicsGroup = game.add.group(nodes);
 		node.graphics = game.add.graphics(node.x, node.y);
 		node.graphicsGroup.add(node.graphics);
 
@@ -97,7 +97,7 @@ class GraphicsManager {
 			this.alpha = 1.0;
 		}, cable.graphics);
 
-		gameGroup.add(cable.graphics);
+		cables.add(cable.graphics);
 		game.world.bringToTop(cable.node_1.graphicsGroup);
 		game.world.bringToTop(cable.node_2.graphicsGroup);
 	}
@@ -123,7 +123,7 @@ class GraphicsManager {
 		if (!packet.state)
 			this.deadPacket(packet);
 
-		gameGroup.add(packet.sprite);
+		packets.add(packet.sprite);
 		node_from.sprite.bringToTop();
 		node_to.sprite.bringToTop();
 
