@@ -13,7 +13,7 @@ SlickUI.namespace('Element');
  * @param height
  * @constructor
  */
-SlickUI.Element.Text = function (x, y, value, size, font, width, height) {
+SlickUI.Element.Text = function (x, y, value, size, fill, font, width, height) {
     this._x = x;
     this._y = y;
     this._value = value;
@@ -72,7 +72,15 @@ SlickUI.Element.Text.prototype.reset = function(x, y, recalculateWidth) {
     }
     x += this.container.x;
     y += this.container.y;
-    this.text = this.container.root.game.make.bitmapText(x, y, this.font, this._value, this.size);
+
+	var style = {
+		font: this.font,
+		fontSize: this.size,
+		fill: this.fill,
+	};
+
+    //this.text = this.container.root.game.make.bitmapText(x, y, this.font, this._value, this.size);
+	this.text = this.container.root.game.make.text(x, y, this._value, style);
     this.text.maxWidth = width;
     this.text.maxHeight = height;
     this.container.displayGroup.add(this.text);
@@ -88,6 +96,10 @@ SlickUI.Element.Text.prototype.init = function() {
     if(typeof this.font == 'undefined') {
         this.font = Object.keys(theme.fonts)[Object.keys(theme.fonts).length - 1];
     }
+
+	if(typeof this.fill == 'undefined') {
+		this.fill = 0x000000;
+	}
 
     this.reset(this._x,this._y);
 };

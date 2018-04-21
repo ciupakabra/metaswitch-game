@@ -124,8 +124,6 @@ class GraphicsManager {
 			this.deadPacket(packet);
 
 		packets.add(packet.sprite);
-		node_from.sprite.bringToTop();
-		node_to.sprite.bringToTop();
 
 		var time = Phaser.Timer.SECOND * cable.total_time();
 		var tween = game.add.tween(packet.sprite).to(

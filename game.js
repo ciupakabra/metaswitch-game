@@ -39,15 +39,7 @@ var graphicsManager;
 var worldGenerator;
 
 var fontsReady = false;
-/*
-//Google fonts
-WebFontConfig = {
-    active: function(){fontsReady = true;},
-    google: {
-      families: ['Lato']
-    }
-};
-*/
+
 // Game vars
 var currentCredit = 500;
 var currentPenalty = 0;
@@ -55,12 +47,9 @@ var packetCount = 0;
 var deadPackets = [];
 
 function preload() {
-	//  Load the Google WebFont Loader script
-  //game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-	this.load.image('server', 'assets/piskel/Server.png');
-	this.load.image('resource', 'assets/piskel/Resource.png');
-	this.load.image('city', 'assets/piskel/City.png');
-	this.load.image('packet', 'assets/packet.png');
+	this.load.image('server', 'assets/server.png');
+	this.load.image('resource', 'assets/resource.png');
+	this.load.image('city', 'assets/city.png');
 	cursors = game.input.keyboard.createCursorKeys();
 
 	// Leave this at the bottom of the method
@@ -97,10 +86,8 @@ function createPanels() {
 }
 
 function create() {
-	//while(!fontsReady){/*pass*/}
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
-  //var style = { font: "40px Lato", fill: "#000000"};
 	gameGroup = game.add.group();
 
 	cables = game.add.group();
@@ -110,11 +97,6 @@ function create() {
 	gameGroup.add(cables);
 	gameGroup.add(packets);
 	gameGroup.add(nodes);
-	
-	//var boundsCircle = game.make.graphics();
-	//boundsCircle.beginFill(0x000000);
-	//boundsCircle.drawCircle(0, 0,2 * BOUND_RADIUS);
-	//gameGroup.add(boundsCircle);
 
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
