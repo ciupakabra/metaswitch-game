@@ -46,11 +46,21 @@ var currentPenalty = 0;
 var packetCount = 0;
 var deadPackets = [];
 
+WebFontConfig = {
+	active: function() {},
+	google: {
+		families: ['Lato'],
+	}
+};
+
+
 function preload() {
 	this.load.image('server', 'assets/server.png');
 	this.load.image('resource', 'assets/resource.png');
 	this.load.image('city', 'assets/city.png');
 	cursors = game.input.keyboard.createCursorKeys();
+
+	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	// Leave this at the bottom of the method
 	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
@@ -68,7 +78,6 @@ var NODE_INFO_HEIGHT = 165;
 
 var PANEL_WIDTH = 200;
 var PANEL_MARGIN = 8;
-var PANEL_PADDING = 5;
 var PANEL_LINE_DIST = 10;
 
 var statusPanel;
@@ -78,7 +87,7 @@ var shopPanel;
 function createPanels() {
 	statusPanel = new StatusPanel(PANEL_MARGIN, PANEL_MARGIN, STATUS_PANEL_WIDTH, STATUS_PANEL_HEIGHT);
 	var shopPanelY = statusPanel.panel.y + STATUS_PANEL_HEIGHT + PANEL_MARGIN;
-	var shopPanelHeight = game.height - shopPanelY - PANEL_PADDING;
+	var shopPanelHeight = game.height - shopPanelY - PANEL_MARGIN;
 
 	shopPanel = new ShopPanel(PANEL_MARGIN, shopPanelY, SHOP_PANEL_WIDTH, shopPanelHeight);
 	nodeInfoPanel = new NodeInfoPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT);
@@ -153,5 +162,5 @@ function updateCamera() {
 }
 
 function render() {
-	//game.debug.pointer(game.input.activePointer);
+	game.debug.pointer(game.input.activePointer);
 }

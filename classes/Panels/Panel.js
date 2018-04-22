@@ -1,9 +1,9 @@
 class Panel {
 	constructor(x, y, width, height, name) {
 		this.panel = new SlickUI.Element.Panel(x, y, width, height);
-		this.header = new SlickUI.Element.Text(PANEL_PADDING, PANEL_PADDING, name);
+		this.header = new SlickUI.Element.Text(0, 0, name, 20, "#ffffff");
 		slickUI.add(this.panel);
-		this.panel.add(this.header).centerHorizontally().text.alpha = 0.5;
+		this.panel.add(this.header).centerHorizontally().alpha = 0.8;
 	}
 
 	setHeader(newHeader) {

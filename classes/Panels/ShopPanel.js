@@ -14,9 +14,9 @@ var NEW_SERVER_MAX_RESOURCES = 3;
 
 class ShopPanel extends Panel {
 	constructBuyCableButton() {
-		var buttonY = this.panel.container.height - SHOP_BUTTON_HEIGHT - PANEL_PADDING;
-		var buttonWidth = this.panel.container.width - 2 * PANEL_PADDING;
-		this.buyCableButton = new SlickUI.Element.Button(PANEL_PADDING, buttonY, buttonWidth, SHOP_BUTTON_HEIGHT);
+		var buttonY = this.panel.container.height - SHOP_BUTTON_HEIGHT;
+		var buttonWidth = this.panel.container.width;
+		this.buyCableButton = new SlickUI.Element.Button(0, buttonY, buttonWidth, SHOP_BUTTON_HEIGHT);
 		this.panel.add(this.buyCableButton);
 		this.buyCableButton.add(new SlickUI.Element.Text(0, 0, "Buy Cable")).center();
 		this.buyCableButton.visible = false;
@@ -40,9 +40,9 @@ class ShopPanel extends Panel {
 	}
 
 	constructBuyServerButton() {
-		var buttonY = this.header.y + this.header.text.textHeight + PANEL_PADDING;
-		var buttonWidth = this.panel.container.width - 2 * PANEL_PADDING;
-		this.buyServerButton = new SlickUI.Element.Button(PANEL_PADDING, buttonY, buttonWidth, SHOP_BUTTON_HEIGHT);
+		var buttonY = this.header.y + this.header.text.height;
+		var buttonWidth = this.panel.container.width;
+		this.buyServerButton = new SlickUI.Element.Button(0, buttonY, buttonWidth, SHOP_BUTTON_HEIGHT);
 		this.panel.add(this.buyServerButton);
 		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Buy a server");
 		this.buyServerButton.add(this.buyServerButtonText).center();

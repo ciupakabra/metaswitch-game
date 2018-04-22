@@ -11,11 +11,21 @@ module.exports = function(grunt) {
 				],
 				dest: 'dist/slick-ui.min.js'
 			}
-		}
+		},
+
+		watch: {
+			scripts: {
+				files: [
+					'src/Plugin.js',
+					'src/**/*.js'
+				],
+				tasks: ['uglify'],
+			},
+		},
 	});
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-
+	grunt.loadNpmTasks('grunt-contrib-watch');
 	// Default task(s).
-	grunt.registerTask('default', ['uglify']);
+	grunt.registerTask('default', ['uglify', 'watch']);
 
 };

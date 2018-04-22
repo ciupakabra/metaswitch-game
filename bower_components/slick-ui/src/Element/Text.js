@@ -21,6 +21,7 @@ SlickUI.Element.Text = function (x, y, value, size, fill, font, width, height) {
     this.height = height;
     this.font = font;
     this.size = size;
+	this.fill = fill;
     this.container = null;
 };
 
@@ -39,7 +40,7 @@ SlickUI.Element.Text.prototype.setContainer = function (container) {
         this.height = this.container.root.game.height;
     }
     if(typeof this.size == 'undefined') {
-        this.size = 16;
+        this.size = 20;
     }
 };
 
@@ -65,8 +66,9 @@ SlickUI.Element.Text.prototype.reset = function(x, y, recalculateWidth) {
     height = Math.min(this.container.height - y, this.height);
     if(typeof this.text != 'undefined') {
         if(recalculateWidth === false) {
-            width = this.text.maxWidth;
-            height = this.text.maxHeight;
+			width = this.text.wordWrapWidth;
+            //width = this.text.maxWidth;
+            //height = this.text.maxHeight;
         }
         this.text.destroy();
     }
@@ -79,10 +81,12 @@ SlickUI.Element.Text.prototype.reset = function(x, y, recalculateWidth) {
 		fill: this.fill,
 	};
 
-    //this.text = this.container.root.game.make.bitmapText(x, y, this.font, this._value, this.size);
 	this.text = this.container.root.game.make.text(x, y, this._value, style);
-    this.text.maxWidth = width;
-    this.text.maxHeight = height;
+	this.text.wordWrap = true;
+	this.text.wordWrapWidth = width;
+    //this.text = this.container.root.game.make.bitmapText(x, y, this.font, this._value, this.size);
+    //this.text.maxWidth = width;
+    //this.text.maxHeight = height;
     this.container.displayGroup.add(this.text);
     this.text.fixedToCamera = true;
 };
@@ -93,8 +97,14 @@ SlickUI.Element.Text.prototype.reset = function(x, y, recalculateWidth) {
 SlickUI.Element.Text.prototype.init = function() {
     var theme = this.container.root.game.cache.getJSON('slick-ui-theme');
 
-    if(typeof this.font == 'undefined') {
+	/*
+	if(typeof this.font == 'undefined') {
         this.font = Object.keys(theme.fonts)[Object.keys(theme.fonts).length - 1];
+    }
+	*/
+
+	if(typeof this.font == 'undefined') {
+        this.font = "Lato";
     }
 
 	if(typeof this.fill == 'undefined') {
@@ -110,7 +120,8 @@ SlickUI.Element.Text.prototype.init = function() {
  * @returns {SlickUI.Element.Text}
  */
 SlickUI.Element.Text.prototype.centerHorizontally = function() {
-    this.text.cameraOffset.x = this.text.maxWidth / 2 - this.text.width / 2 + this.container.x;
+    //this.text.cameraOffset.x = this.text.maxWidth / 2 - this.text.width / 2 + this.container.x;
+    this.text.cameraOffset.x = this.text.wordWrapWidth / 2 - this.text.width / 2 + this.container.x;
     return this;
 };
 
@@ -121,7 +132,8 @@ SlickUI.Element.Text.prototype.centerHorizontally = function() {
  */
 SlickUI.Element.Text.prototype.centerVertically = function() {
     var theme = this.container.root.game.cache.getJSON('slick-ui-theme');
-    this.text.cameraOffset.y = this.container.height / 2 - this.text.height / 2 - Math.round(theme.button['border-y'] / 2) + this.container.y;
+    //this.text.cameraOffset.y = this.container.height / 2 - this.text.height / 2 - Math.round(theme.button['border-y'] / 2) + this.container.y;
+    this.text.cameraOffset.y = this.container.height / 2 - this.text.height / 2 + this.container.y;
     return this;
 };
 

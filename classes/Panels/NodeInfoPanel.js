@@ -2,7 +2,7 @@ class NodeInfoPanel extends Panel {
 	constructor(x, y, width, height) {
 		super(x, y, width, height, "Node information");
 		var contentY = this.header.y + this.header.size + PANEL_LINE_DIST;
-		this.content = new SlickUI.Element.Text(PANEL_PADDING, contentY, "content");
+		this.content = new SlickUI.Element.Text(0, contentY, "content");
 		this.panel.add(this.content);
 	}
 
