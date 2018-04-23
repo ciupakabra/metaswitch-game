@@ -1,5 +1,8 @@
 class GraphicsManager {
-	constructor() {}
+	constructor() {
+		this.satBarGraphics = game.make.graphics();
+		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4;
+	}
 
 	spriteInitServer(node) {
 		node.graphicsGroup = game.add.group(gameGroup);
@@ -69,6 +72,7 @@ class GraphicsManager {
 
 	arcUpdate(node) {
 		var nodeSpace = 50;
+
 		var angleTo = Math.min(360 * network.packetsInNode(node)/nodeSpace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
 		node.graphics.destroy();
@@ -150,6 +154,31 @@ class GraphicsManager {
 		packet.sprite.tint = 0x000000;
 	}
 
+	satisfactionBarUpdate() {
+		var limit = 500;
+
+		this.satBarGraphics.destroy();
+		this.satBarGraphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
+
+		this.satBarGraphics.endFill();
+		this.satBarGraphics.lineStyle(3, 0x4C4C4C, 1);
+		this.satBarGraphics.drawRect(-1, -1, this.satBarWidth + 2, 32);
+
+		var curCount = 0;
+		for (i = 0; i < deadPackets.length; i++) {
+			if (deadPackets[i] > 0) {
+				this.satBarGraphics.alpha = 0.6;
+				this.satBarGraphics.beginFill(RESOURCE_COLORS[i]);
+				this.satBarGraphics.lineStyle(0, 0x000000, 1);
+				this.satBarGraphics.drawRect((curCount/limit)*this.satBarWidth, 0, (deadPackets[i])/limit*this.satBarWidth, 30);
+				this.satBarGraphics.endFill();
+				curCount += deadPackets[i];
+			}
+		}
+
+
+
+	}
 	createSillhouette(node) {
 		var bmd = game.make.bitmapData()
 		bmd.load(node.sprite.key);

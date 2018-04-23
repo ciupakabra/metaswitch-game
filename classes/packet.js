@@ -23,7 +23,12 @@ class Packet {
 		this.state = false;
 		currentPenalty++;
 
-		deadPackets.push(this.id);
+		if (this.content == null) {
+			deadPackets[this.destination.type - 1] += 1;
+		} else {
+			deadPackets[this.content.type - 1] += 1;
+		}
+		graphicsManager.satisfactionBarUpdate();
 
 		if (this.travelling)
 			graphicsManager.deadPacket(this);

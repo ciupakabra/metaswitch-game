@@ -2,12 +2,19 @@ var config = {
 	renderer: Phaser.AUTO,
 	width: window.innerWidth * window.devicePixelRatio,
 	height: window.innerHeight * window.devicePixelRatio,
-	state: {
-		preload: preload,
-		create: create,
-		update: update,
-		render: render,
+}
+
+var bootConfig = {
+	preload: function() {
+		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	}
+}
+
+var playConfig = {
+	preload: preload,
+	create: create,
+	update: update,
+	render: render,
 };
 
 // Colors
@@ -22,6 +29,10 @@ var BGCOL = 0x111111;
 var SHOP_WIDTH = 200;
 
 var game = new Phaser.Game(config);
+game.state.add('boot', bootConfig);
+game.state.add('game', playConfig);
+
+game.state.start('boot');
 var cursors;
 var mode = 'cable';
 var scale = 40; // Global scale for how far apart the textures are
@@ -45,9 +56,13 @@ var currentCredit = 500;
 var currentPenalty = 0;
 var packetCount = 0;
 var deadPackets = [];
+for (var i = 0;i < RESOURCE_COLORS.length;++i) {
+	deadPackets[i] = 0;
+}
+
 
 WebFontConfig = {
-	active: function() {},
+	active: function() {game.state.start('game');},
 	google: {
 		families: ['Lato'],
 	}
@@ -59,8 +74,6 @@ function preload() {
 	this.load.image('resource', 'assets/resource.png');
 	this.load.image('city', 'assets/city.png');
 	cursors = game.input.keyboard.createCursorKeys();
-
-	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	// Leave this at the bottom of the method
 	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
@@ -135,6 +148,7 @@ function create() {
 	game.stage.backgroundColor = 0x111111;
 
 	createPanels();
+	graphicsManager.satisfactionBarUpdate();
 
 	network = new Network();
 
