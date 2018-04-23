@@ -63,6 +63,7 @@ for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 
 WebFontConfig = {
 	active: function() {game.state.start('game');},
+	inactive: function() {game.state.start('game');},
 	google: {
 		families: ['Lato'],
 	}

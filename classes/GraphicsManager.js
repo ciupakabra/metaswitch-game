@@ -2,6 +2,12 @@ class GraphicsManager {
 	constructor() {
 		this.satBarGraphics = game.make.graphics();
 		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4;
+
+		var graphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
+		graphics.alpha = 0.4;
+		graphics.beginFill(0x6C6C6C);
+		graphics.lineStyle(3, 0x4C4C4C, 1);
+		graphics.drawRect(-1, -1, this.satBarWidth + 2, 32);
 	}
 
 	spriteInitServer(node) {
@@ -160,7 +166,6 @@ class GraphicsManager {
 		this.satBarGraphics.destroy();
 		this.satBarGraphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
 
-		this.satBarGraphics.endFill();
 		this.satBarGraphics.lineStyle(3, 0x4C4C4C, 1);
 		this.satBarGraphics.drawRect(-1, -1, this.satBarWidth + 2, 32);
 
