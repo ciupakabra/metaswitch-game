@@ -1,6 +1,6 @@
 class City extends Node {
 	constructor(network, x, y, lambda, p) {
-		super(network, x, y);
+		super(network, x, y, "city");
 		this.seed = Random.engines.mt19937().autoSeed();
 		this.p = p;
 		this.exp_distro = Prob.exponential(lambda);
@@ -11,7 +11,7 @@ class City extends Node {
 	}
 
 	info() { // Gotta change this
-		var ret = "Type: city\n";
+		var ret = "";
 
 		for (var i = 0;i < this.p.length;++i) {
 			ret += String(100 * this.p[i]["prob"]) + "% of " + this.p[i]["resource_unit"].color.toString(16) + "\n";
@@ -24,13 +24,13 @@ class City extends Node {
 		this.network.delete_packet(packet);
 		if (packet.destination != this)
 			return false;
-		
+
 		if (packet.state) {
 			packet.delivered = true;
 			currentCredit += packet.content.reward;
 			return true;
 		}
-		
+
 		return false;
 	}
 

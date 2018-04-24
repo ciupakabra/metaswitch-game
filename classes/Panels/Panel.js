@@ -8,13 +8,14 @@ class Panel {
 
 	setHeader(newHeader) {
 		this.header.value = newHeader;
+		this.header.centerHorizontally();
 	}
 
 	moveTo(x, y) {
 		this.panel.x = x;
 		this.panel.y = y;
 	}
-
+	
 	get visible() {
 		return this.panel.visible;
 	}

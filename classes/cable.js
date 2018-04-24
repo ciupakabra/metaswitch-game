@@ -1,5 +1,5 @@
 class Cable {
-	constructor(network, node_1, node_2, lambda, v) {
+	constructor(network, node_1, node_2, lambda, v, level) {
 		this.network = network;
 		this.distance = node_1.dist(node_2);
 		this.node_1 = node_1;
@@ -12,6 +12,7 @@ class Cable {
 		this.B2 = [];
 		this.can_send_1 = true;
 		this.can_send_2 = true;
+		this.level = level;
 		graphicsManager.spriteInitCable(this);
 	}
 
@@ -49,7 +50,7 @@ class Cable {
 			var packet = this.B1.shift();
 
 			packet.travelling = true;
-			graphicsManager.spriteInitPacket(packet, this, this.node_1, this.node_2); 
+			graphicsManager.spriteInitPacket(packet, this, this.node_1, this.node_2);
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 1, true);
 		} else if (bufferNo == 2) {
@@ -61,7 +62,7 @@ class Cable {
 			var packet = this.B2.shift();
 
 			packet.travelling = true;
-			graphicsManager.spriteInitPacket(packet, this, this.node_2, this.node_1); 
+			graphicsManager.spriteInitPacket(packet, this, this.node_2, this.node_1);
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);
 		}

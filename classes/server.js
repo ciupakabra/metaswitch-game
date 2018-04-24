@@ -1,30 +1,21 @@
 class Server extends Node {
-	constructor(network, x, y, max_servers, max_cities, max_resources) {
-		super(network, x, y);
-		this.max_servers = max_servers;
-		this.max_cities = max_cities;
-		this.max_resources = max_resources;
-		this.connected_servers = 0;
-		this.connected_cities = 0;
-		this.connected_resources = 0;
+	constructor(network, x, y, capacity, max_nodes, level) {
+		super(network, x, y, "server");
+		this.max_nodes = max_nodes;
+		this.connected_nodes = 0;
+		this.level = 1;
+		this.capacity = capacity;
 		graphicsManager.spriteInitServer(this);
 	}
 
 	info() {
-		return "Type: server\n" + 
-			"Can connect to:\n" + 
-			String(this.max_servers - this.connected_servers) + " servers\n" + 
-			String(this.max_cities - this.connected_cities) + " cities\n" + 
-			String(this.max_resources - this.connected_resources) + " resources\n";
+		return "Level " + String(this.level) + " Server\n" +
+			"Capacity: " + String(this.capacity) + "\n" +
+			"Remaining Cables: " + String(this.max_nodes - this.connected_nodes) + "\n";
 	}
 
 	connect_with(node) {
-		if (node instanceof Server)
-			this.connected_servers++;
-		else if (node instanceof City)
-			this.connected_cities++;
-		else if (node instanceof Resource)
-			this.connected_resources++;
+		this.connected_nodes++;
 	}
 
 	process_packet(packet) {

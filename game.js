@@ -93,6 +93,12 @@ var SHOP_PANEL_WIDTH = STATUS_PANEL_WIDTH;
 var NODE_INFO_WIDTH = 200;
 var NODE_INFO_HEIGHT = 165;
 
+var BUY_SERVER_WIDTH = 200;
+var BUY_SERVER_HEIGHT = 185;
+
+var BUY_CABLE_WIDTH = 200;
+var BUY_CABLE_HEIGHT = 75;
+
 var PANEL_WIDTH = 200;
 var PANEL_MARGIN = 8;
 var PANEL_LINE_DIST = 10;
@@ -106,9 +112,16 @@ function createPanels() {
 	var shopPanelY = statusPanel.panel.y + STATUS_PANEL_HEIGHT + PANEL_MARGIN;
 	var shopPanelHeight = game.height - shopPanelY - PANEL_MARGIN;
 
-	shopPanel = new ShopPanel(PANEL_MARGIN, shopPanelY, SHOP_PANEL_WIDTH, shopPanelHeight);
-	nodeInfoPanel = new NodeInfoPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT);
-	nodeInfoPanel.visible = false;
+	nodeCityPanel = new NodeCityPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT);
+	nodeCityPanel.visible = false;
+	nodeInfoServerPanel = new NodeInfoServerPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT + 30);
+	nodeInfoServerPanel.visible = false;
+	nodeResourcePanel = new NodeResourcePanel(0, 0, BUY_CABLE_WIDTH, BUY_CABLE_HEIGHT);
+	nodeResourcePanel.visible = false;
+	shopServerPanel = new ShopServerPanel(0, 0, BUY_SERVER_WIDTH, BUY_SERVER_HEIGHT);
+	shopServerPanel.visible = false;
+	shopCablePanel = new ShopCablePanel(0, 0, BUY_CABLE_WIDTH, BUY_CABLE_HEIGHT);
+	shopCablePanel.visible = false;
 }
 
 function create() {
@@ -119,6 +132,7 @@ function create() {
 	cables = game.add.group();
 	packets = game.add.group();
 	nodes = game.add.group();
+	satisfactionBar = game.add.group();
 
 	gameGroup.add(cables);
 	gameGroup.add(packets);
@@ -151,8 +165,14 @@ function create() {
 	game.input.mouse.mouseWheelCallback = mouseWheel;
 	game.stage.backgroundColor = 0x111111;
 
+	game.clicked = false;
+	game.nodeclicked = false;
+	game.currentActivePanel = null;
+	game.buttonPress = false;
+	game.cableMode = false;
+
 	createPanels();
-	graphicsManager.satisfactionBarUpdate();
+	graphicsManager.satisfactionBarInit();
 
 	network = new Network();
 
@@ -162,9 +182,14 @@ function create() {
 function update() {
 	updateCamera();
 
+	generalClickCheck();
+
+	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
+		game.currentActivePanel.setToNode(game.currentActivePanel.node);
+	}
 	// Bug this.edges[destination_idx] is undefined when no cables
 	statusPanel.updateCredit(currentCredit);
-	statusPanel.updatePenalty(currentPenalty);
+	// statusPanel.updatePenalty(currentPenalty);
 }
 
 function updateCamera() {
@@ -181,4 +206,39 @@ function updateCamera() {
 
 function render() {
 	game.debug.pointer(game.input.activePointer);
+}
+
+function generalClickCheck() {
+	if (game.input.activePointer.isDown) {
+		if (game.currentActivePanel == null) {
+			game.clicked = true;
+		} else if (!game.buttonPress && !game.nodeClicked && !game.cableMode) {
+			game.currentActivePanel.visible = false;
+			game.currentActivePanel = null;
+			shopServerPanel.nowUp = true;
+			game.cableMode = false;
+		}
+		if (game.cableMode) {game.clicked = true;};
+		if (game.input.activePointer.duration > 200) {
+			game.clicked = false;
+			shopServerPanel.nowUp = false;
+		}
+	}
+
+	if (game.input.activePointer.isUp) {
+		if (game.clicked && !game.buttonPress) {
+			if (!game.cableMode) {
+				shopServerPanel.nowUp = !shopServerPanel.nowUp;
+				shopServerPanel.setToNode(null);
+			} else {
+				game.cableMode = false;
+				game.currentActivePanel.visible = false;
+				game.currentActivePanel = null;
+			}
+			shopCablePanel.visible = false;
+		}
+		game.buttonPress = false;
+		game.clicked = false;
+		game.nodeclicked = null;
+	}
 }
