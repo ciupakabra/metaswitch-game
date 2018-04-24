@@ -4,6 +4,7 @@ class Node {
 		this.x = x;
 		this.y = y;
 		this.cables = [];
+		network.add_node(this);
 	}
 
 	connect_with(node) {

@@ -21,6 +21,9 @@ var playConfig = {
 var RESOURCE_COLORS = [
 	0xED1C24,
 	0xFDFFFC,
+	0x8cb369,
+	0xf4e285,
+	0x368f8b,
 	0x235789,
 ]
 

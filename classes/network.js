@@ -78,6 +78,9 @@ class Network {
 	}
 
 	add_node(node) {
+		if (this.nodes.indexOf(node) != -1)
+			return false;
+
 		var node_idx = this.nodes.length;
 		this.nodes.push(node);
 		this.adjacency_lists.push([]);
