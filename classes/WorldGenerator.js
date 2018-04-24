@@ -54,7 +54,9 @@ class WorldGenerator {
 			x.push(Math.floor(Math.random() * 11));
 		}
 
-		x.sort();
+		// Javascript sort numbers in alphabetical order by default
+		x.sort(function(a, b){return a-b});
+
 		var last = 0;
 
 		var distribution = [];
@@ -72,6 +74,8 @@ class WorldGenerator {
 			"prob": (10 - last) / 10,
 			"resource_unit": types[types.length - 1]
 		});
+
+		console.log(distribution);
 
 		return distribution;
 	}
