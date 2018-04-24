@@ -6,7 +6,68 @@ var config = {
 
 var bootConfig = {
 	preload: function() {
+		game.load.spritesheet('button', 'assets/ui/menu/buttons.png', 600, 150);
+		game.load.spritesheet('buttonSmall', 'assets/ui/menu/buttonsSmall.png', 250, 125);
+		game.load.image('tutorial1', 'assets/ui/menu/tutorial1.png');
+		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
+
 		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+		slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
+	}
+}
+
+var menuConfig = {
+	create: function() {
+		game.stage.backgroundColor = 0x111111;
+
+		function createButton(x, y, text, funct) {
+			button = game.add.button(x, y, 'button', function() {}, this, 1, 0, 1, 0);
+			button.onInputDown.add(funct, this);
+			text = game.add.text(x + 300, y + 75, text);
+			text.font = 'Lato';
+			text.anchor.setTo(0.5);
+			text.fontSize = 80;
+		}
+
+		createButton(150, 34, "Play Game", function() {game.state.start('game')});
+		createButton(150, 218, "Tutorial", function() {game.state.start('tutorial')});
+		createButton(150, 402, "About Us", function() {game.state.start('about')});
+
+	}
+}
+
+var tutorialConfig = {
+	create: function() {
+		game.stage.backgroundColor = 0x111111;
+		background = game.add.tileSprite(0, 0, 900, 600, 'tutorial1');
+
+		button = game.add.button(325, 450, 'buttonSmall', function() {}, this, 1, 0, 1, 0);
+		button.onInputDown.add(function() {game.state.start('menu')}, this);
+		text = game.add.text(450, 512, "Menu");
+		text.font = 'Lato';
+		text.anchor.setTo(0.5);
+		text.fontSize = 60;
+	}
+}
+
+var aboutConfig = {
+	create: function() {
+		game.stage.backgroundColor = 0x111111;
+		background = game.add.tileSprite(0, 0, 900, 600, 'aboutUs');
+
+		button = game.add.button(166, 450, 'buttonSmall', function() {}, this, 1, 0, 1, 0);
+		button.onInputDown.add(function() {window.open('https://www.metaswitch.com/careers')}, this);
+		text = game.add.text(291, 512, "Careers");
+		text.font = 'Lato';
+		text.anchor.setTo(0.5);
+		text.fontSize = 60;
+
+		button = game.add.button(517, 450, 'buttonSmall', function() {}, this, 1, 0, 1, 0);
+		button.onInputDown.add(function() {game.state.start('menu')}, this);
+		text = game.add.text(642, 512, "Menu");
+		text.font = 'Lato';
+		text.anchor.setTo(0.5);
+		text.fontSize = 60;
 	}
 }
 
@@ -33,15 +94,13 @@ var SHOP_WIDTH = 200;
 
 var game = new Phaser.Game(config);
 game.state.add('boot', bootConfig);
+game.state.add('menu', menuConfig);
+game.state.add('tutorial', tutorialConfig);
+game.state.add('about', aboutConfig);
 game.state.add('game', playConfig);
 
 game.state.start('boot');
-var cursors;
-var mode = 'cable';
-var scale = 40; // Global scale for how far apart the textures are
-var speed = 30; // How long before network update (60/speed updates per second)
-var time = 0;
-var worldScale = 1;
+var worldScale = 0.8;
 var gameGroup;
 
 var nodes;
@@ -52,9 +111,8 @@ var slickUI;
 var graphicsManager;
 var worldGenerator;
 
-var fontsReady = false;
-
 // Game vars
+
 var currentCredit = 2000;
 var currentPenalty = 0;
 var packetCount = 0;
@@ -63,10 +121,19 @@ for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 	deadPackets[i] = 0;
 }
 
-
+function initialisation() {
+	currentCredit = 2000;
+	currentPenalty = 0;
+	packetCount = 0;
+	deadPackets = [];
+	for (var i = 0;i < RESOURCE_COLORS.length;++i) {
+		deadPackets[i] = 0;
+	}
+	worldScale = 0.5;
+}
 WebFontConfig = {
-	active: function() {game.state.start('game');},
-	inactive: function() {game.state.start('game');},
+	active: function() {game.state.start('menu', menuConfig);},
+	inactive: function() {game.state.start('menu', menuConfig);},
 	google: {
 		families: ['Lato'],
 	}
@@ -77,10 +144,8 @@ function preload() {
 	this.load.image('server', 'assets/server.png');
 	this.load.image('resource', 'assets/resource.png');
 	this.load.image('city', 'assets/city.png');
-	cursors = game.input.keyboard.createCursorKeys();
 
 	// Leave this at the bottom of the method
-	slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
 	slickUI.load('assets/ui/kenney/kenney.json');
 }
 
@@ -125,6 +190,7 @@ function createPanels() {
 }
 
 function create() {
+	initialisation();
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
 	gameGroup = game.add.group();
@@ -141,6 +207,10 @@ function create() {
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
 
+	this.pKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
+	this.pKey.onDown.add(function() {game.state.start('menu');}, this);
+
+
 	function mouseWheel(event) {
 		var cursorx = (gameGroup.x - game.input.activePointer.position.x)/worldScale;
 		var cursory = (gameGroup.y - game.input.activePointer.position.y)/worldScale;
@@ -151,14 +221,14 @@ function create() {
 			}
 			worldScale -= 0.05;
 		} else {
-			if (worldScale != 2) {
+			if (worldScale != 1) {
 				gameGroup.x += cursorx * 0.05;
 				gameGroup.y += cursory * 0.05;
 			}
 			worldScale += 0.05;
 
 		}
-		worldScale = Phaser.Math.clamp(worldScale, 0.25, 2);
+		worldScale = Phaser.Math.clamp(worldScale, 0.25, 1);
 		gameGroup.scale.set(worldScale);
 	}
 
@@ -177,6 +247,8 @@ function create() {
 
 	createPanels();
 	graphicsManager.satisfactionBarInit();
+
+	gameGroup.scale.set(worldScale);
 }
 
 function update() {
