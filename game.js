@@ -1,7 +1,7 @@
 var config = {
 	renderer: Phaser.AUTO,
-	width: window.innerWidth * window.devicePixelRatio,
-	height: window.innerHeight * window.devicePixelRatio,
+	width: 900,
+	height: 600,
 }
 
 var bootConfig = {
