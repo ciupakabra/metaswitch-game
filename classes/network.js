@@ -29,16 +29,16 @@ class Network {
 		for (var i = 0;i < this.cables.length;++i)
 			if (this.cables[i].node_1 == node || this.cables[i].node_2 == node)
 				ret.push(this.cables[i]);
-		
+
 		return ret;
 	}
-	
+
 	update_distances() {
 		for (var i = 0;i < this.nodes.length;++i) {
 			this.dijkstra(i);
 		}
 	}
-	
+
 	dijkstra(source) {
 		var visited = [];
 		for (var i = 0;i < this.nodes.length;++i) {
@@ -115,46 +115,29 @@ class Network {
 		var idx1 = this.nodes.indexOf(node1);
 		var idx2 = this.nodes.indexOf(node2);
 
-		if (node1 == node2)
+		if (node1 == node2) {
 			return false;
+		}
 
-		for (var i = 0;i < this.adjacency_lists[idx1].length;++i)
-			if (this.adjacency_lists[idx1][i][0] == idx2)
+		for (var i = 0;i < this.adjacency_lists[idx1].length;++i) {
+			if (this.adjacency_lists[idx1][i][0] == idx2) {
 				return false;
-		if (!(node1 instanceof Server) && !(node2 instanceof Server))
+			}
+		}
+		if (!(node1 instanceof Server) && !(node2 instanceof Server)) {
 			return false;
+		}
 
 		var can1 = true;
 		var can2 = true;
 
 		if (node1 instanceof Server) {
-			if (node2 instanceof Server) {
-				can1 = node1.connected_servers < node1.max_servers;
-			}
-
-			if (node2 instanceof Resource) {
-				can1 = node1.connected_resources < node1.max_resources;
-			}
-
-			if (node2 instanceof City) {
-				can1 = node1.connected_cities < node1.max_cities;
-			}
+			can1 = node1.connected_nodes < node1.max_nodes;
 		}
-		
+
 		if (node2 instanceof Server) {
-			if (node1 instanceof Server) {
-				can2 = node2.connected_servers < node2.max_servers;
-			}
-
-			if (node1 instanceof Resource) {
-				can2 = node2.connected_resources < node2.max_resources;
-			}
-
-			if (node1 instanceof City) {
-				can2 = node2.connected_cities < node2.max_cities;
-			}
+			can2 = node2.connected_nodes < node2.max_nodes;
 		}
-
 		return can1 && can2;
 	}
 
@@ -186,6 +169,18 @@ class Network {
 		var origin_idx = this.nodes.indexOf(origin);
 		var destination_idx = this.nodes.indexOf(destination);
 		return this.edges[destination_idx][origin_idx];
+	}
+
+	get_adjacent_cable(origin, destination) {
+		var idx1 = this.nodes.indexOf(origin);
+		var idx2 = this.nodes.indexOf(destination);
+
+		for (var i = 0;i < this.adjacency_lists[idx1].length;++i) {
+			if (this.adjacency_lists[idx1][i][0] == idx2) {
+				return this.adjacency_lists[idx1][i][1];
+			}
+		}
+		return null;
 	}
 
 	get_nearest_resource(origin, resource_unit) {
