@@ -44,7 +44,6 @@ class NodeInfoServerPanel extends Panel {
       game.nodeclicked = this.node;
       this.visible = false;
       shopServerPanel.setToNode(this.node);
-      console.log("???");
 		}, this);
 	}
 
@@ -61,6 +60,7 @@ class NodeInfoServerPanel extends Panel {
       game.nodeclicked = this.node;
       this.visible = false;
       shopCablePanel.setHeader("Choose Destination")
+      shopCablePanel.buyCableButton.visible = false;
       shopCablePanel.setToNode(this.node);
 		}, this);
 	}

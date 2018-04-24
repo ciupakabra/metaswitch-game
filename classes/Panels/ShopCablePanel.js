@@ -55,7 +55,7 @@ class ShopCablePanel extends Panel {
             } else {
 						  this.buyCableButtonText.value = "Buy Cable for " + String(this.cableCost(this.node, this.nodeDest));
             }
-						this.buyCableButton.center();
+						this.buyCableButtonText.center();
 					},
 					this
 				);

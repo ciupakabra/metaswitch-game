@@ -45,7 +45,8 @@ class NodeCityPanel extends Panel {
       game.buttonPress = true;
       game.nodeclicked = this.node;
       this.visible = false;
-      shopCablePanel.setHeader("Choose Destination")
+      shopCablePanel.setHeader("Choose Destination");
+      shopCablePanel.buyCableButton.visible = false;
       shopCablePanel.setToNode(this.node);
 		}, this);
 	}
