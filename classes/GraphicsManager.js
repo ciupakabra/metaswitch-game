@@ -80,7 +80,7 @@ class GraphicsManager {
 	}
 
 	arcUpdate(node) {
-		var nodeSpace = 50;
+		var nodeSpace = node.capacity;
 
 		var angleTo = Math.min(360 * network.packetsInNode(node)/nodeSpace, 359.99);
 		node.graphicsGroup.remove(node.graphics);

@@ -55,7 +55,7 @@ var worldGenerator;
 var fontsReady = false;
 
 // Game vars
-var currentCredit = 500;
+var currentCredit = 2000;
 var currentPenalty = 0;
 var packetCount = 0;
 var deadPackets = [];
@@ -171,12 +171,12 @@ function create() {
 	game.buttonPress = false;
 	game.cableMode = false;
 
-	createPanels();
-	graphicsManager.satisfactionBarInit();
 
 	network = new Network();
-
 	worldGenerator.initGameWorld();
+
+	createPanels();
+	graphicsManager.satisfactionBarInit();
 }
 
 function update() {
@@ -205,7 +205,7 @@ function updateCamera() {
 }
 
 function render() {
-	game.debug.pointer(game.input.activePointer);
+	//game.debug.pointer(game.input.activePointer);
 }
 
 function generalClickCheck() {

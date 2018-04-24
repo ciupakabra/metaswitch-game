@@ -1,6 +1,6 @@
-var INITIAL_BOUNDS_RADIUS = 1000;
-var INITIAL_MIN_DIST = 300;
-var MINIMAL_MIN_DIST = 100;
+var INITIAL_BOUNDS_RADIUS = 700;
+var INITIAL_MIN_DIST = 220;
+var MINIMAL_MIN_DIST = 75;
 var FIXED_CITY_LAMBDA = 0.8;
 
 class WorldGenerator {
@@ -8,6 +8,7 @@ class WorldGenerator {
 		this.minDist = INITIAL_MIN_DIST;
 		this.boundsRadius = INITIAL_BOUNDS_RADIUS;
 		this.types = [];
+		this.hasResource = [];
 		this.activeTypesCount = 3;
 	}
 
@@ -40,9 +41,28 @@ class WorldGenerator {
 			y *= this.boundsRadius;
 
 			if (this.canPlace([x, y])) {
-				var type = types[Math.floor(Math.random() * types.length)];
+				var typeNo = Math.floor(Math.random() * types.length)
+				var type = types[typeNo];
+				this.hasResource[typeNo] = true;
 				new Resource(network, x, y, type);
 				generated++;
+			}
+		}
+
+		for (i = 0; i < this.activeTypesCount; i++) {
+			while (!this.hasResource[i]) {
+				var x, y;
+				x = 2 * Math.random() - 1
+				y = 2 * Math.random() - 1;
+
+				x *= this.boundsRadius;
+				y *= this.boundsRadius;
+
+				if (this.canPlace([x, y])) {
+					var type = types[i];
+					this.hasResource[i] = true;
+					new Resource(network, x, y, type);
+				}
 			}
 		}
 	}
@@ -63,7 +83,7 @@ class WorldGenerator {
 
 		for (var i = 0;i < x.length;++i) {
 			distribution.push({
-				"prob": (x[i] - last) / 10, 
+				"prob": (x[i] - last) / 10,
 				"resource_unit": types[i],
 			});
 
@@ -75,7 +95,7 @@ class WorldGenerator {
 			"resource_unit": types[types.length - 1]
 		});
 
-		console.log(distribution);
+		//console.log(distribution);
 
 		return distribution;
 	}
@@ -132,12 +152,12 @@ class WorldGenerator {
 		this.activeTypesCount++;
 		if (this.activeTypesCount == this.types.length)
 			return;
-		game.time.events.add(Phaser.Timer.MINUTE, this.newResourceUnitTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newResourceUnitTimer, this);
 	}
 
 	newResourcesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
-		this.generateResources(10, currTypes);
+		this.generateResources(4, currTypes);
 
 		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newResourcesTimer, this);
 	}
@@ -145,13 +165,15 @@ class WorldGenerator {
 	newCitiesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
 		this.generateCities(2, currTypes);
+		this.citySpeed = Math.max(this.citySpeed - 0.5, 1);
 
-		game.time.events.add(Phaser.Timer.MINUTE * 1.5, this.newCitiesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * this.citySpeed, this.newCitiesTimer, this);
 	}
 
 	initGameWorld() {
 		for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 			this.types.push(new ResourceUnit(i, 10, 30, RESOURCE_COLORS[i]));
+			this.hasResource.push(false);
 		}
 
 		// Generate resources
@@ -163,8 +185,8 @@ class WorldGenerator {
 		this.newRadiusTween(400);
 		this.newMinDistTween();
 
-		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newResourceUnitTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 1.5, this.newResourcesTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 4, this.newCitiesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 4.9, this.newResourceUnitTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newResourcesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newCitiesTimer, this);
 	}
 }

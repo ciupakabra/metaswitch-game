@@ -1,5 +1,6 @@
-var NEW_CABLE_LAMBDA = 0.6;
+var NEW_CABLE_LAMBDA = 1;
 var NEW_CABLE_V = 50;
+var CABLE_PENALTY = 20;
 
 class ShopCablePanel extends Panel {
 	constructor(x, y, width, height) {
@@ -44,7 +45,7 @@ class ShopCablePanel extends Panel {
       game.buttonPress = true;
       game.nodeclicked = this.node;
       this.visible = false;
-      if (currentCredit < this.cableCost(this.node, this.nodeDest)) {
+      if (currentCredit < this.cableCost()) {
 				this.buyCableButtonText.value = "Insufficient Funds";
 				this.buyCableButtonText.center();
 				game.time.events.add(
@@ -60,29 +61,27 @@ class ShopCablePanel extends Panel {
 					this
 				);
 			} else if (this.existingCable) {
-        var cable = network.get_adjacent_cable(this.node,this.nodeDest);
-        cable.v += 10;
-        cable.lambda -= 0.03;
+        currentCredit -= this.cableCost();
 
-        this.visible = false;
-        this.buyCableButton.visible = false;
-        game.currentActivePanel = null;
-        game.cableMode = false;
+        this.cable.v += 25;
+        this.cable.lambda -= 0.03;
+        this.cable.level += 1;
+
+        this.enableButton(this.nodeDest);
       } else {
+        currentCredit -= this.cableCost();
+        
         var cable = new Cable(
   				network,
   				this.node,
   				this.nodeDest,
   				NEW_CABLE_LAMBDA,
   				NEW_CABLE_V,
+          1
   			);
 
         network.add_cable(cable);
-  			currentCredit -= this.cableCost();
-        this.visible = false;
-        this.buyCableButton.visible = false;
-        game.currentActivePanel = null;
-        game.cableMode = false;
+        this.enableButton(this.nodeDest);
       }
 		}, this);
 	}
@@ -90,13 +89,12 @@ class ShopCablePanel extends Panel {
   cableCheck(node) {
     this.nodeDest = node;
     this.buyCableButton.visible = false;
-    if (network.get_adjacent_cable(this.node,this.nodeDest) != null) {
-      this.existingCable = true;
+    this.getCable();
+    if (this.cable != null) {
       this.setHeader("Upgrade or Reselect");
       this.buyCableButtonText.value = "Upgrade for " + String(this.cableCost(this.node, this.nodeDest));
       return true;
     } else {
-      this.existingCable = false;
       if (!network.can_connect(this.node,this.nodeDest)) {
         if ((this.node.type == "server") && (this.node.connected_nodes == this.node.max_nodes)) {
           this.setHeader("Source Server Full");
@@ -139,8 +137,23 @@ class ShopCablePanel extends Panel {
   cableCost() {
     if (this.node == null) {
       return 0;
+    }
+    this.getCable();
+    var dist = this.node.dist(this.nodeDest);
+    var baseCost = Math.floor((dist/4 + (dist*dist)/5000)/1.5);
+    if (!this.existingCable) {
+      return baseCost + CABLE_PENALTY;
     } else {
-      return (Math.floor(this.node.dist(this.nodeDest)/6));
+      return (Math.floor(baseCost + (baseCost/2 * (this.cable.level)*(1 + this.cable.level / 8)) + CABLE_PENALTY));
+    }
+  }
+
+  getCable() {
+    this.cable = network.get_adjacent_cable(this.node,this.nodeDest);
+    if (this.cable == null) {
+      this.existingCable = false
+    } else {
+      this.existingCable = true
     }
   }
 
@@ -150,5 +163,4 @@ class ShopCablePanel extends Panel {
       this.buyCableButton.visible = true;
     }
   };
-
 }

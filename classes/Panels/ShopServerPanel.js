@@ -17,6 +17,7 @@ class ShopServerPanel extends Panel {
     this.node = node;
     game.currentActivePanel = this;
     this.visible = true;
+    this.buyServerButtonText.value = "Buy for "+ String(this.cost());
     if (node == null) {
       if ((game.nodeclicked != null) || !this.nowUp) {
         this.visible = false;
@@ -51,19 +52,19 @@ class ShopServerPanel extends Panel {
 		var buttonWidth = this.panel.container.width;
 		this.buyServerButton = new SlickUI.Element.Button(0, buttonY, buttonWidth, 30);
 		this.panel.add(this.buyServerButton);
-		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Buy for 100");
+		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Buy for " + String(NEW_SERVER_COST));
 		this.buyServerButton.add(this.buyServerButtonText).center();
 
 		this.buyServerButton.events.onInputDown.add(function() {
       game.nodeclicked = true;
       game.buttonPress = true;
-			if (currentCredit < NEW_SERVER_COST) {
+			if (currentCredit < this.cost()) {
 				this.buyServerButtonText.value = "Insufficient Funds";
 				this.buyServerButtonText.center();
 				game.time.events.add(
 					Phaser.Timer.SECOND * 1.3,
 					function() {
-						this.buyServerButtonText.value = "Buy for 100";
+						this.buyServerButtonText.value = "Buy for "+ String(this.cost());
 						this.buyServerButtonText.center();
 					},
 					this
@@ -86,10 +87,18 @@ class ShopServerPanel extends Panel {
 			} else {
         this.node.max_nodes += 3;
         this.node.capacity += 50;
+        currentCredit -= this.cost();
         this.node.level += 1;
-        currentCredit -= NEW_SERVER_COST;
         this.setToNode(this.node);
       };
 		}, this);
 	}
+
+  cost(){
+    if (this.node == null) {
+      return (NEW_SERVER_COST)
+    } else {
+      return Math.floor(NEW_SERVER_COST + 5*(this.node.level)*(10+this.node.level));
+    }
+  }
 }
