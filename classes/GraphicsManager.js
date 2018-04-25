@@ -99,6 +99,7 @@ class GraphicsManager {
 		cable.graphics.moveTo(cable.node_1.x, cable.node_1.y);
 		cable.graphics.lineTo(cable.node_2.x, cable.node_2.y);
 		cable.graphics.endFill();
+		cable.graphics.tint = CABLE_COLORS[0];
 
 		cable.graphics.inputEnabled = true;
 

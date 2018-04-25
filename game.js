@@ -89,6 +89,15 @@ var RESOURCE_COLORS = [
 	0x235789,
 ]
 
+var CABLE_COLORS = [
+	0x808080,
+	0xffffff,
+	0x63c93a,
+	0x1b36ff,
+	0x961496,
+	0xffab12
+]
+
 var BGCOL = 0x111111;
 
 var SHOP_WIDTH = 200;
@@ -212,6 +221,10 @@ function create() {
 	packets = game.add.group();
 	nodes = game.add.group();
 	satisfactionBar = game.add.group();
+	buttons = game.add.group();
+
+	buttons.add(buttonPause);
+	buttons.add(buttonPlay);
 
 	gameGroup.add(cables);
 	gameGroup.add(packets);
@@ -221,7 +234,11 @@ function create() {
 	game.input.mouse.capture = true;
 
 	this.pKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
-	this.pKey.onDown.add(function() {pause();}, this);
+	this.pKey.onDown.add(function() {
+		cables.forEach(function(item) {
+			item.tint = 0x462912;
+		}, this)
+	});
 
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 	this.oKey.onDown.add(function() {game.time.events.add(0, function() {currentCredit += 10;}, this)}, this);
