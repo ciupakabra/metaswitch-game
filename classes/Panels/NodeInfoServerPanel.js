@@ -1,3 +1,5 @@
+var NEW_SERVER_CAPACITY = 20;
+
 class NodeInfoServerPanel extends Panel {
 	constructor(x, y, width, height) {
 		super(x, y, width, height, "Server Information");
@@ -70,8 +72,8 @@ class NodeInfoServerPanel extends Panel {
 					this
 				);
 			} else {
-        this.node.max_nodes += 3;
-        this.node.capacity += 50;
+        this.node.max_nodes += 1;
+        this.node.capacity += NEW_SERVER_CAPACITY;
         currentCredit -= this.node.cost();
         this.node.level += 1;
         this.setToNode(this.node);

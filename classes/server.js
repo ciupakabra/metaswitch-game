@@ -1,3 +1,5 @@
+var NEW_SERVER_CAPACITY = 20;
+
 class Server extends Node {
 	constructor(network, x, y, capacity, max_nodes, level) {
 		super(network, x, y, "server");
@@ -10,8 +12,8 @@ class Server extends Node {
 
 	info() {
 		return "Level: " + String(this.level) + " -> " + String(this.level + 1) + "\n" +
-			"Capacity: " + String(this.capacity) + " -> " + String(this.capacity + 50) + "\n" +
-			"Ports: " + String(this.max_nodes) + " -> " + String(this.max_nodes + 3) + "\n";
+			"Capacity: " + String(this.capacity) + " -> " + String(this.capacity + NEW_SERVER_CAPACITY) + "\n" +
+			"Ports: " + String(this.max_nodes) + " -> " + String(this.max_nodes + 1) + "\n";
 	}
 
 	connect_with(node) {
