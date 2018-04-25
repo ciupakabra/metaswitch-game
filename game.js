@@ -102,6 +102,20 @@ var BGCOL = 0x111111;
 
 var SHOP_WIDTH = 200;
 
+// Redefining Phaser functions to avoid glitch where a packet travels in pause mode after re-focusing
+Phaser.Game.prototype.gameResumed = function (event) {
+	if (this._paused && !this._codePaused)
+	{
+		this._paused = false;
+		if (!paused) {
+			this.time.gameResumed();
+		}
+		this.input.reset();
+		this.sound.unsetMute();
+		this.onResume.dispatch(event);
+	}
+}
+
 var game = new Phaser.Game(config);
 game.state.add('boot', bootConfig);
 game.state.add('menu', menuConfig);
@@ -290,19 +304,12 @@ function update() {
 	updateCamera();
 
 	generalClickCheck();
-	if (paused) {
-		game.time.gamePaused();
-	}
 
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
 		game.currentActivePanel.setToNode(game.currentActivePanel.node);
 	}
 
 	statusPanel.updateCredit(currentCredit);
-
-	if (paused) {
-		game.time.gamePaused();
-	}
 }
 
 function pause() {

@@ -48,6 +48,6 @@ class Packet {
 	}
 
 	rewardPenalty() {
-		this.penalty = Math.max(5, this.penalty - 2);
+		this.penalty = Math.min(5, this.penalty - 2);
 	}
 }
