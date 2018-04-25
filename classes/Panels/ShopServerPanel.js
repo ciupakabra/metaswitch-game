@@ -11,6 +11,8 @@ class ShopServerPanel extends Panel {
     this.nowUp = false;
     this.width = width;
     this.height = height;
+		this.xpos = x;
+		this.ypos = y;
 	}
 
   setToNode(node) {
@@ -25,9 +27,20 @@ class ShopServerPanel extends Panel {
         this.nowUp = false;
       }
       this.setHeader("Buy Server");
-      this.x = game.input.activePointer.position.x;
+			//Correct panels that go off screen
+      this.x = game.input.activePointer.position.x
+			this.xpos = this.x - this.width/2;
+			if (this.xpos + this.width > game.width) {
+				this.xpos = game.width - this.width;
+			} else if (this.xpos - this.width/2 < 0) {
+				this.xpos = 0;
+			}
       this.y = game.input.activePointer.position.y;
-      this.moveTo(this.x, this.y);
+			this.ypos = this.y;
+			if (this.y + this.height > game.height) {
+				this.ypos = game.height - this.height;
+			}
+      this.moveTo(this.xpos, this.ypos);
       this.content.value = "Max Cables: \n    4\n Capacity: \n    50";
     } else {
       var a = node.max_nodes;
