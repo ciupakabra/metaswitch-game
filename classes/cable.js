@@ -72,7 +72,9 @@ class Cable {
 			var packet = this.B2.shift();
 			packet.travelling = true;
 			graphicsManager.spriteInitPacket(packet, this, this.node_2, this.node_1);
-			packet.rewardPenalty();
+			if (network.packetsInNode(this.node_2) > this.node_2.capacity) {
+				packet.rewardPenalty();
+			}
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);
 		}

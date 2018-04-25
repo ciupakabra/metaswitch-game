@@ -13,7 +13,7 @@ class Resource extends Node {
 		this.resource_unit = resource_unit;
 		this.color = this.resource_unit.color;
 		graphicsManager.spriteInitResource(this);
-		this.capacity = NaN;
+		this.capacity = Infinity;
 	}
 
 	info() {

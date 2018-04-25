@@ -99,7 +99,7 @@ class ShopServerPanel extends Panel {
           this.nowUp = false;
 					currentCredit -= NEW_SERVER_COST;
 			} else {
-        this.node.max_nodes += 3;
+        this.node.max_nodes += 1;
         this.node.capacity += NEW_SERVER_CAPACITY;
         currentCredit -= this.cost();
         this.node.level += 1;
