@@ -15,7 +15,7 @@ class Panel {
 		this.panel.x = x;
 		this.panel.y = y;
 	}
-	
+
 	get visible() {
 		return this.panel.visible;
 	}

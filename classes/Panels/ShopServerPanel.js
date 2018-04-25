@@ -3,7 +3,7 @@ var NEW_SERVER_MAX_NODES = 4;
 
 class ShopServerPanel extends Panel {
 	constructor(x, y, width, height) {
-		super(x, y, width, height, "Buy Server");
+		super(x, y, width, height);
 		var contentY = this.header.y + this.header.size + PANEL_LINE_DIST;
 		this.content = new SlickUI.Element.Text(0, contentY, "content");
 		this.panel.add(this.content);
@@ -19,20 +19,20 @@ class ShopServerPanel extends Panel {
     this.node = node;
     game.currentActivePanel = this;
     this.visible = true;
-    this.buyServerButtonText.value = "Buy for "+ String(this.cost());
+    this.buyServerButtonText.value = "Buy Server ("+ String(this.cost())+")";
+		this.buyServerButtonText.center();
     if (node == null) {
       if ((game.nodeclicked != null) || !this.nowUp) {
         this.visible = false;
         game.currentActivePanel = null;
         this.nowUp = false;
       }
-      this.setHeader("Buy Server");
 			//Correct panels that go off screen
       this.x = game.input.activePointer.position.x
 			this.xpos = this.x - this.width/2;
 			if (this.xpos + this.width > game.width) {
 				this.xpos = game.width - this.width;
-			} else if (this.xpos - this.width/2 < 0) {
+			} else if (this.xpos < 0) {
 				this.xpos = 0;
 			}
       this.y = game.input.activePointer.position.y;
@@ -41,11 +41,11 @@ class ShopServerPanel extends Panel {
 				this.ypos = game.height - this.height;
 			}
       this.moveTo(this.xpos, this.ypos);
-      this.content.value = "Max Cables: \n    4\n Capacity: \n    50";
+      this.content.value = "";
     } else {
       var a = node.max_nodes;
       var b = node.capacity;
-      this.setHeader("Upgrade Server");
+      //this.setHeader("");
       this.content.value = "Max Cables: \n    " +
       String(a) + " -> "+ String(a+3) +
       "\n Capacity: \n    " + String(b) + " -> " + String(b+50);
@@ -65,7 +65,7 @@ class ShopServerPanel extends Panel {
 		var buttonWidth = this.panel.container.width;
 		this.buyServerButton = new SlickUI.Element.Button(0, buttonY, buttonWidth, 30);
 		this.panel.add(this.buyServerButton);
-		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Buy for " + String(NEW_SERVER_COST));
+		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Buy Server (" + String(NEW_SERVER_COST)+")");
 		this.buyServerButton.add(this.buyServerButtonText).center();
 
 		this.buyServerButton.events.onInputDown.add(function() {

@@ -22,6 +22,8 @@ class NodeInfoServerPanel extends Panel {
     this.visible = true;
     game.currentActivePanel = this;
 		this.changeInfo(node.info());
+		this.buyServerButtonText.value = "Upgrade ("+String(this.node.cost())+")";
+    this.buyServerButtonText.center();
 
 		var x = gameGroup.worldPosition.x
 			+ node.sprite.x * gameGroup.worldScale.x
@@ -50,14 +52,30 @@ class NodeInfoServerPanel extends Panel {
 		var buttonWidth = this.panel.container.width;
 		this.buyServerButton = new SlickUI.Element.Button(0, buttonY, buttonWidth, 30);
 		this.panel.add(this.buyServerButton);
-		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "Upgrade Server");
+		this.buyServerButtonText = new SlickUI.Element.Text(0, 0, "");
 		this.buyServerButton.add(this.buyServerButtonText).center();
 
 		this.buyServerButton.events.onInputDown.add(function() {
+			game.nodeclicked = true;
       game.buttonPress = true;
-      game.nodeclicked = this.node;
-      this.visible = false;
-      shopServerPanel.setToNode(this.node);
+			if (currentCredit < this.node.cost()) {
+				this.buyServerButtonText.value = "Upgrade ("+String(this.node.cost())+")";
+				this.buyServerButtonText.center();
+				game.time.events.add(
+					Phaser.Timer.SECOND * 1.3,
+					function() {
+						this.buyServerButtonText.value = "Upgrade ("+String(this.node.cost())+")";
+						this.buyServerButtonText.center();
+					},
+					this
+				);
+			} else {
+        this.node.max_nodes += 3;
+        this.node.capacity += 50;
+        currentCredit -= this.node.cost();
+        this.node.level += 1;
+        this.setToNode(this.node);
+      };
 		}, this);
 	}
 
