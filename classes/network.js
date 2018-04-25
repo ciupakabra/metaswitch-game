@@ -155,10 +155,15 @@ class Network {
 			this.adjacency_lists[idx_2].push([idx_1, cable]);
 			this.update_distances();
 
-			for (var i = 0;i < this.nodes.length;++i)
-				if (this.nodes[i] instanceof City)
-					this.nodes[i].releaseWaitingPool();
-
+			for (var i = 0;i < this.nodes.length;++i) {
+				if (this.nodes[i] instanceof City) {
+						if (!paused) {
+							this.nodes[i].releaseWaitingPool();
+						} else {
+							release.push(this.nodes[i]);
+						}
+				}
+			}
 			return true;
 		}
 		return false;

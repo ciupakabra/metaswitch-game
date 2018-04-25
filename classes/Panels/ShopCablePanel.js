@@ -70,7 +70,7 @@ class ShopCablePanel extends Panel {
         this.enableButton(this.nodeDest);
       } else {
         currentCredit -= this.cableCost();
-        
+
         var cable = new Cable(
   				network,
   				this.node,
@@ -98,7 +98,8 @@ class ShopCablePanel extends Panel {
       if (!network.can_connect(this.node,this.nodeDest)) {
         if ((this.node.type == "server") && (this.node.connected_nodes == this.node.max_nodes)) {
           this.setHeader("Source Server Full");
-          game.time.events.add(
+          var timer = game.time.create(true);
+          timer.add(
   					Phaser.Timer.SECOND * 1.3,
   					function() {
   						this.setHeader("Choose Destination")
@@ -108,7 +109,8 @@ class ShopCablePanel extends Panel {
           return false;
         } else if ((this.nodeDest.type == "server") && (this.nodeDest.connected_nodes == this.nodeDest.max_nodes)) {
           this.setHeader("Destination Full");
-          game.time.events.add(
+          var timer = game.time.create(true);
+          timer.add(
   					Phaser.Timer.SECOND * 1.3,
   					function() {
   						this.setHeader("Choose Destination")
@@ -118,7 +120,8 @@ class ShopCablePanel extends Panel {
           return false;
         } else {
         this.setHeader("Cannot connect");
-        game.time.events.add(
+        var timer = game.time.create(true);
+        timer.add(
 					Phaser.Timer.SECOND * 1.3,
 					function() {
 						this.setHeader("Choose Destination")

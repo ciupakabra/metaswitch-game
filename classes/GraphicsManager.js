@@ -145,6 +145,7 @@ class GraphicsManager {
 			Phaser.Easing.Linear.NONE,
 			true
 		);
+		packet.sprite.tween = tween;
 		tween.onComplete.add(function() {
 			this.travelling = false;
 			this.sprite.destroy();

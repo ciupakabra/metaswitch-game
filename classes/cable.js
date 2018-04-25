@@ -42,8 +42,9 @@ class Cable {
 		}
 
 		if (bufferNo == 1) {
-			if (this.B1.length == 0)
+			if (this.B1.length == 0) {
 				return;
+			}
 
 			this.can_send_1 = false;
 
@@ -54,8 +55,9 @@ class Cable {
 
 			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 1, true);
 		} else if (bufferNo == 2) {
-			if (this.B2.length == 0)
+			if (this.B2.length == 0) {
 				return;
+			}
 
 			this.can_send_2 = false;
 

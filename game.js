@@ -117,6 +117,8 @@ var currentCredit = 2000;
 var currentPenalty = 0;
 var packetCount = 0;
 var deadPackets = [];
+var paused = false;
+var release = [];
 for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 	deadPackets[i] = 0;
 }
@@ -126,6 +128,8 @@ function initialisation() {
 	currentPenalty = 0;
 	packetCount = 0;
 	deadPackets = [];
+	release = [];
+	paused = false;
 	for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 		deadPackets[i] = 0;
 	}
@@ -208,7 +212,7 @@ function create() {
 	game.input.mouse.capture = true;
 
 	this.pKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
-	this.pKey.onDown.add(function() {game.state.start('menu');}, this);
+	this.pKey.onDown.add(function() {pause();}, this);
 
 
 	function mouseWheel(event) {
@@ -255,15 +259,34 @@ function update() {
 	updateCamera();
 
 	generalClickCheck();
+	if (paused) {
+		game.time.gamePaused();
+	}
 
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
 		game.currentActivePanel.setToNode(game.currentActivePanel.node);
 	}
-	// Bug this.edges[destination_idx] is undefined when no cables
+
 	statusPanel.updateCredit(currentCredit);
-	// statusPanel.updatePenalty(currentPenalty);
+
+	if (paused) {
+		game.time.gamePaused();
+	}
 }
 
+function pause() {
+	if (!paused) {
+		paused = true;
+		game.time.gamePaused();
+		packets.forEach(function(item) {item.tween.pause();})
+	} else {
+		paused = false;
+		game.time.gameResumed();
+		packets.forEach(function(item) {item.tween.resume();})
+		release.forEach(function(item) {item.releaseWaitingPool();})
+		release = [];
+	}
+}
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
 		if (game.origDragPoint) {
