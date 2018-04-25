@@ -1,6 +1,6 @@
 var INITIAL_BOUNDS_RADIUS = 700;
-var INITIAL_MIN_DIST = 220;
-var MINIMAL_MIN_DIST = 75;
+var INITIAL_MIN_DIST = 200;
+var MINIMAL_MIN_DIST = 150;
 var FIXED_CITY_LAMBDA = 0.8;
 
 class WorldGenerator {
@@ -10,6 +10,7 @@ class WorldGenerator {
 		this.types = [];
 		this.hasResource = [];
 		this.activeTypesCount = 3;
+		this.citySpeed = 3;
 	}
 
 	inCircle(center, radius, p) {
@@ -122,10 +123,10 @@ class WorldGenerator {
 	}
 
 	newRadiusTween(inc) {
-		var newInc = 0.98 * inc;
+		var newInc = 0.8 * inc;
 		var tween = game.add.tween(this).to(
 			{ boundsRadius: "+" + newInc.toString() },
-			Phaser.Timer.MINUTE,
+			Phaser.Timer.MINUTE * 4,
 			Phaser.Easing.Linear.NONE,
 			true
 		);
@@ -167,6 +168,7 @@ class WorldGenerator {
 		this.generateCities(2, currTypes);
 		this.citySpeed = Math.max(this.citySpeed - 0.5, 1);
 
+		//game.time.events.add(Phaser.Timer.SECOND * 0.5, this.newCitiesTimer, this);
 		game.time.events.add(Phaser.Timer.MINUTE * this.citySpeed, this.newCitiesTimer, this);
 	}
 
@@ -182,11 +184,11 @@ class WorldGenerator {
 		this.generateResources(10, currTypes);
 		this.generateCities(3, currTypes);
 
-		this.newRadiusTween(400);
+		this.newRadiusTween(INITIAL_BOUNDS_RADIUS * 0.6);
 		this.newMinDistTween();
 
-		game.time.events.add(Phaser.Timer.MINUTE * 4.9, this.newResourceUnitTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newResourcesTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newCitiesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 3.9, this.newResourceUnitTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newResourcesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newCitiesTimer, this);
 	}
 }

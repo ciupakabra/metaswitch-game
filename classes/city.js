@@ -28,7 +28,9 @@ class City extends Node {
 
 		if (packet.state) {
 			packet.delivered = true;
-			currentCredit += packet.content.reward;
+			var reward = packet.content.reward - packet.penalty;
+			currentCredit += reward;
+			lifetimeCredit += reward;
 			return true;
 		}
 
@@ -64,16 +66,26 @@ class City extends Node {
 		var tmp = [];
 		while (this.waitingPool.length > 0) {
 			var packet = this.waitingPool.shift();
-			var res = this.network.get_nearest_resource(this, packet.destination);
-			if (res == null)
-				tmp.push(packet);
-			else {
-				var cable = this.network.get_cable(this, res);
-				cable.send_packet(this, packet);
-			}
+			if (packet.state) {
+				var res = this.network.get_nearest_resource(this, packet.destination);
+				if (res == null)
+					tmp.push(packet);
+				else {
+					var cable = this.network.get_cable(this, res);
+					cable.send_packet(this, packet);
+			  }
+		  }
 		}
 
 		this.waitingPool = tmp;
+	}
+
+	removefromWaiting(packet) {
+		var pos = this.waitingPool.indexOf(packet);
+		if (pos >= 0) {
+			this.waitingPool = this.waitingPool.splice(i,1);
+		}
+		graphicsManager.arcUpdate(this);
 	}
 
 	create_request() {

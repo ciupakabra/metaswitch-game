@@ -8,6 +8,7 @@ var bootConfig = {
 	preload: function() {
 		game.load.spritesheet('button', 'assets/ui/menu/buttons.png', 600, 150);
 		game.load.spritesheet('buttonSmall', 'assets/ui/menu/buttonsSmall.png', 250, 125);
+		game.load.spritesheet('buttonPause', 'assets/ui/menu/buttonsPause.png', 35, 35);
 		game.load.image('tutorial1', 'assets/ui/menu/tutorial1.png');
 		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
 
@@ -114,6 +115,7 @@ var worldGenerator;
 // Game vars
 
 var currentCredit = 2000;
+var lifetimeCredit = 0;
 var currentPenalty = 0;
 var packetCount = 0;
 var deadPackets = [];
@@ -127,6 +129,7 @@ function initialisation() {
 	currentCredit = 2000;
 	currentPenalty = 0;
 	packetCount = 0;
+	lifetimeCredit = 0;
 	deadPackets = [];
 	release = [];
 	paused = false;
@@ -195,6 +198,12 @@ function createPanels() {
 
 function create() {
 	initialisation();
+
+	buttonPause = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 1, 0, 1, 0);
+	buttonPause.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = false; buttonPlay.visible = true;}, this);
+	buttonPlay = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 3, 2, 3, 2);
+	buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
+	buttonPlay.visible = false;
 	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
 	gameGroup = game.add.group();
@@ -214,6 +223,11 @@ function create() {
 	this.pKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 	this.pKey.onDown.add(function() {pause();}, this);
 
+	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
+	this.oKey.onDown.add(function() {game.time.events.add(0, function() {currentCredit += 10;}, this)}, this);
+
+	this.iKey = game.input.keyboard.addKey(Phaser.Keyboard.I);
+	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
 
 	function mouseWheel(event) {
 		var cursorx = (gameGroup.x - game.input.activePointer.position.x)/worldScale;

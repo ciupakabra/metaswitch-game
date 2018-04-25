@@ -80,6 +80,7 @@ class ShopCablePanel extends Panel {
         this.cable.v += 25;
         this.cable.lambda -= 0.03;
         this.cable.level += 1;
+        network.update_distances();
 
         this.enableButton(this.nodeDest);
       } else {
