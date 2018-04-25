@@ -1,6 +1,6 @@
 var INITIAL_BOUNDS_RADIUS = 700;
 var INITIAL_MIN_DIST = 220;
-var MINIMAL_MIN_DIST = 75;
+var MINIMAL_MIN_DIST = 170;
 var FIXED_CITY_LAMBDA = 0.8;
 
 class WorldGenerator {
@@ -10,6 +10,7 @@ class WorldGenerator {
 		this.types = [];
 		this.hasResource = [];
 		this.activeTypesCount = 3;
+		this.citySpeed = 1.5;
 	}
 
 	inCircle(center, radius, p) {
@@ -122,10 +123,10 @@ class WorldGenerator {
 	}
 
 	newRadiusTween(inc) {
-		var newInc = 0.98 * inc;
+		var newInc = Math.min(0.8 * inc, 0.32 * INITIAL_BOUNDS_RADIUS);
 		var tween = game.add.tween(this).to(
 			{ boundsRadius: "+" + newInc.toString() },
-			Phaser.Timer.MINUTE,
+			Phaser.Timer.MINUTE * 5,
 			Phaser.Easing.Linear.NONE,
 			true
 		);
@@ -136,7 +137,7 @@ class WorldGenerator {
 	}
 
 	newMinDistTween() {
-		var newDist = Math.max(MINIMAL_MIN_DIST, 0.99 * this.minDist);
+		var newDist = Math.max(MINIMAL_MIN_DIST, 0.985 * this.minDist);
 
 		var tween = game.add.tween(this).to(
 			{ minDist: newDist },
@@ -157,36 +158,37 @@ class WorldGenerator {
 
 	newResourcesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
-		this.generateResources(4, currTypes);
+		this.generateResources(1, currTypes);
 
-		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newResourcesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 7/12, this.newResourcesTimer, this);
 	}
 
 	newCitiesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
-		this.generateCities(2, currTypes);
-		this.citySpeed = Math.max(this.citySpeed - 0.5, 1);
+		this.generateCities(1, currTypes);
+		this.citySpeed = Math.max((this.citySpeed - 0.25), 1);
 
+		//game.time.events.add(Phaser.Timer.SECOND * 0.5, this.newCitiesTimer, this);
 		game.time.events.add(Phaser.Timer.MINUTE * this.citySpeed, this.newCitiesTimer, this);
 	}
 
 	initGameWorld() {
 		for (var i = 0;i < RESOURCE_COLORS.length;++i) {
-			this.types.push(new ResourceUnit(i, 10, 30, RESOURCE_COLORS[i]));
+			this.types.push(new ResourceUnit(i, 10 + Math.max(2 * Math.ceil((i-2)/2),0), 40, RESOURCE_COLORS[i]));
 			this.hasResource.push(false);
 		}
 
 		// Generate resources
 		var currTypes = this.types.slice(0, this.activeTypesCount);
 
-		this.generateResources(10, currTypes);
+		this.generateResources(7, currTypes);
 		this.generateCities(3, currTypes);
 
-		this.newRadiusTween(400);
+		this.newRadiusTween(INITIAL_BOUNDS_RADIUS * 0.5);
 		this.newMinDistTween();
 
-		game.time.events.add(Phaser.Timer.MINUTE * 4.9, this.newResourceUnitTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newResourcesTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newCitiesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 3.8, this.newResourceUnitTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 1.9, this.newResourcesTimer, this);
+		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newCitiesTimer, this);
 	}
 }

@@ -1,6 +1,6 @@
 var NEW_CABLE_LAMBDA = 1;
 var NEW_CABLE_V = 50;
-var CABLE_PENALTY = 20;
+var CABLE_PENALTY = 50;
 
 class ShopCablePanel extends Panel {
 	constructor(x, y, width, height) {
@@ -77,9 +77,27 @@ class ShopCablePanel extends Panel {
 			} else if (this.existingCable) {
         currentCredit -= this.cableCost();
 
-        this.cable.v += 25;
-        this.cable.lambda -= 0.03;
+        this.cable.lambda -= 0.15;
         this.cable.level += 1;
+        var level = this.cable.level;
+        this.cable.v += 50 + (4 * Math.pow(Math.floor(level/2),2));
+        network.update_distances();
+
+        if (level <= 6) {
+          this.cable.graphics.tint = CABLE_COLORS[level - 1];
+        } else {
+          var timer = game.time.create(false);
+          timer.loop(100, updateCable, this.cable, this.cable);
+          this.cable.version = 2;
+          function updateCable(cable) {
+            cable.version += 1;
+            if (cable.version == CABLE_COLORS.length) {
+              cable.version = 2;
+            }
+            cable.graphics.tint = CABLE_COLORS[cable.version];
+          }
+          timer.start();
+        }
 
         this.enableButton(this.nodeDest);
       } else {
@@ -157,11 +175,11 @@ class ShopCablePanel extends Panel {
     }
     this.getCable();
     var dist = this.node.dist(this.nodeDest);
-    var baseCost = Math.floor((dist/4 + (dist*dist)/5000)/1.5);
+    var baseCost = Math.floor((dist/4 + (dist*dist)/5000)/1.5) + CABLE_PENALTY;
     if (!this.existingCable) {
-      return baseCost + CABLE_PENALTY;
+      return baseCost;
     } else {
-      return (Math.floor(baseCost + (baseCost/2 * (this.cable.level)*(1 + this.cable.level / 8)) + CABLE_PENALTY));
+      return (Math.floor(baseCost * (this.cable.level)*(1 + this.cable.level/3)));
     }
   }
 

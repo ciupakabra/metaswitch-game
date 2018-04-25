@@ -23,6 +23,7 @@ class Server extends Node {
 			this.network.delete_packet(packet);
 			return true;
 		}
+		graphicsManager.arcUpdate(this);
 
 		// Packet destination is a specific node
 		if (packet.destination instanceof Node) {

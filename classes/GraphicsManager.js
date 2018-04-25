@@ -3,7 +3,7 @@ class GraphicsManager {
 
 	satisfactionBarInit() {
 		this.satBarGraphics = game.make.graphics();
-		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4;
+		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4 - 37;
 
 		var graphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
 		satisfactionBar.add(graphics);
@@ -99,6 +99,7 @@ class GraphicsManager {
 		cable.graphics.moveTo(cable.node_1.x, cable.node_1.y);
 		cable.graphics.lineTo(cable.node_2.x, cable.node_2.y);
 		cable.graphics.endFill();
+		cable.graphics.tint = CABLE_COLORS[0];
 
 		cable.graphics.inputEnabled = true;
 

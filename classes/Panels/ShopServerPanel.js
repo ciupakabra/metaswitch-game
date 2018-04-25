@@ -1,5 +1,6 @@
 var NEW_SERVER_COST = 100;
 var NEW_SERVER_MAX_NODES = 4;
+var NEW_SERVER_CAPACITY = 20;
 
 class ShopServerPanel extends Panel {
 	constructor(x, y, width, height) {
@@ -87,7 +88,7 @@ class ShopServerPanel extends Panel {
 						network,
 						(this.x - gameGroup.worldPosition.x) / gameGroup.worldScale.x,
   					(this.y - gameGroup.worldPosition.y) / gameGroup.worldScale.y,
-            50,
+            NEW_SERVER_CAPACITY,
 						NEW_SERVER_MAX_NODES,
             1
 					);
@@ -98,8 +99,8 @@ class ShopServerPanel extends Panel {
           this.nowUp = false;
 					currentCredit -= NEW_SERVER_COST;
 			} else {
-        this.node.max_nodes += 3;
-        this.node.capacity += 50;
+        this.node.max_nodes += 1;
+        this.node.capacity += NEW_SERVER_CAPACITY;
         currentCredit -= this.cost();
         this.node.level += 1;
         this.setToNode(this.node);
