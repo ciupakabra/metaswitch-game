@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>High Scores</title>
+  <link rel="icon" href="/static/assets/Logo.png">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+</head>
+
+<body><center>
+
+  <h2>Add Sort Buttons Here</h2>
+
+  <table class="pure-table pure-table-horizontal">
+      <thead>
+          <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email Address</th>
+              <th>Score</th>
+              <th>Timestamp</th>
+          </tr>
+      </thead>
+
+      <tbody>
+        {% for score in users %}
+          <tr>
+              <td>{{score[0]}}</td>
+              <td>{{score[1]}}</td>
+              <td>{{score[2]}}</td>
+              <td>{{score[3]}}</td>
+              <td>{{score[4]}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+  </table>
+</center></body>
+</html>
