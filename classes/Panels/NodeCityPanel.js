@@ -1,6 +1,6 @@
 class NodeCityPanel extends Panel {
 	constructor(x, y, width, height) {
-		super(x, y, width, height, "City Information");
+		super(x, y, width, height, "City");
 		var contentY = this.header.y + this.header.size + PANEL_LINE_DIST;
 		this.content = new SlickUI.Element.Text(0, contentY, "");
 		this.panel.add(this.content);
@@ -20,7 +20,7 @@ class NodeCityPanel extends Panel {
       shopServerPanel.nowUp = true;
     }
 
-    this.changeInfo(node.info());
+    //this.changeInfo(node.info());
     this.node = node;
     this.visible = true;
     game.currentActivePanel = this;

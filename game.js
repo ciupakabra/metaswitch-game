@@ -188,6 +188,8 @@ var SHOP_PANEL_WIDTH = STATUS_PANEL_WIDTH;
 var NODE_INFO_WIDTH = 200;
 var NODE_INFO_HEIGHT = 165;
 
+var CITY_INFO_HEIGHT = 75;
+
 var BUY_SERVER_WIDTH = 200;
 var BUY_SERVER_HEIGHT = 50;
 
@@ -207,7 +209,7 @@ function createPanels() {
 	var shopPanelY = statusPanel.panel.y + STATUS_PANEL_HEIGHT + PANEL_MARGIN;
 	var shopPanelHeight = game.height - shopPanelY - PANEL_MARGIN;
 
-	nodeCityPanel = new NodeCityPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT);
+	nodeCityPanel = new NodeCityPanel(0, 0, NODE_INFO_WIDTH, CITY_INFO_HEIGHT);
 	nodeCityPanel.visible = false;
 	nodeInfoServerPanel = new NodeInfoServerPanel(0, 0, NODE_INFO_WIDTH, NODE_INFO_HEIGHT + 30);
 	nodeInfoServerPanel.visible = false;
