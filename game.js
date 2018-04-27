@@ -152,6 +152,7 @@ for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 	deadPackets[i] = 0;
 }
 var foreverTimers = [];
+var cursors;
 
 function initialisation() {
 	currentCredit = 2000;
@@ -231,14 +232,14 @@ function createPanels() {
 
 function create() {
 	initialisation();
-
+  cursors = game.input.keyboard.createCursorKeys();
 	buttonPause = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 1, 0, 1, 0);
 	buttonPause.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = false; buttonPlay.visible = true;}, this);
 	buttonPlay = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 3, 2, 3, 2);
 	buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
 	buttonPlay.visible = false;
-	worldGenerator = new WorldGenerator();
 	graphicsManager = new GraphicsManager();
+	worldGenerator = new WorldGenerator();
 	gameGroup = game.add.group();
 
 	cables = game.add.group();
@@ -313,6 +314,19 @@ function create() {
 
 function update() {
 	updateCamera();
+
+	if (cursors.up.isDown) {
+    gameGroup.y += 4;
+  }
+  else if (cursors.down.isDown) {
+    gameGroup.y -= 4;
+  }
+
+	if (cursors.left.isDown) {
+    gameGroup.x += 4;
+  } else if (cursors.right.isDown) {
+    gameGroup.x -= 4;
+  }
 
 	generalClickCheck();
 	if (!paused) {
