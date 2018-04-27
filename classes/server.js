@@ -1,30 +1,23 @@
+var NEW_SERVER_CAPACITY = 20;
+
 class Server extends Node {
-	constructor(network, x, y, max_servers, max_cities, max_resources) {
-		super(network, x, y);
-		this.max_servers = max_servers;
-		this.max_cities = max_cities;
-		this.max_resources = max_resources;
-		this.connected_servers = 0;
-		this.connected_cities = 0;
-		this.connected_resources = 0;
+	constructor(network, x, y, capacity, max_nodes, level) {
+		super(network, x, y, "server");
+		this.max_nodes = max_nodes;
+		this.connected_nodes = 0;
+		this.level = 1;
+		this.capacity = capacity;
 		graphicsManager.spriteInitServer(this);
 	}
 
 	info() {
-		return "Type: server\n" + 
-			"Can connect to:\n" + 
-			String(this.max_servers - this.connected_servers) + " servers\n" + 
-			String(this.max_cities - this.connected_cities) + " cities\n" + 
-			String(this.max_resources - this.connected_resources) + " resources\n";
+		return "Level: " + String(this.level) + " -> " + String(this.level + 1) + "\n" +
+			"Capacity: " + String(this.capacity) + " -> " + String(this.capacity + NEW_SERVER_CAPACITY) + "\n" +
+			"Ports: " + String(this.max_nodes) + " -> " + String(this.max_nodes + 1) + "\n";
 	}
 
 	connect_with(node) {
-		if (node instanceof Server)
-			this.connected_servers++;
-		else if (node instanceof City)
-			this.connected_cities++;
-		else if (node instanceof Resource)
-			this.connected_resources++;
+		this.connected_nodes++;
 	}
 
 	process_packet(packet) {
@@ -32,6 +25,7 @@ class Server extends Node {
 			this.network.delete_packet(packet);
 			return true;
 		}
+		graphicsManager.arcUpdate(this);
 
 		// Packet destination is a specific node
 		if (packet.destination instanceof Node) {
@@ -47,5 +41,8 @@ class Server extends Node {
 		}
 
 		return false;
+	}
+	cost(){
+		return Math.floor(NEW_SERVER_COST + 5*(this.level)*(10+this.level));
 	}
 }

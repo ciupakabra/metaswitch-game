@@ -1,17 +1,18 @@
 class City extends Node {
 	constructor(network, x, y, lambda, p) {
-		super(network, x, y);
+		super(network, x, y, "city");
 		this.seed = Random.engines.mt19937().autoSeed();
 		this.p = p;
 		this.exp_distro = Prob.exponential(lambda);
 		//this.next_packet_cd = this.poisson_distro.apply(this.seed);
 		this.newTimer();
 		this.waitingPool = [];
+		this.capacity = 50;
 		graphicsManager.spriteInitCity(this);
 	}
 
 	info() { // Gotta change this
-		var ret = "Type: city\n";
+		var ret = "";
 
 		for (var i = 0;i < this.p.length;++i) {
 			ret += String(100 * this.p[i]["prob"]) + "% of " + this.p[i]["resource_unit"].color.toString(16) + "\n";
@@ -24,13 +25,15 @@ class City extends Node {
 		this.network.delete_packet(packet);
 		if (packet.destination != this)
 			return false;
-		
+
 		if (packet.state) {
 			packet.delivered = true;
-			currentCredit += packet.content.reward;
+			var reward = packet.content.reward - packet.penalty;
+			currentCredit += reward;
+			lifetimeCredit += reward;
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -63,16 +66,26 @@ class City extends Node {
 		var tmp = [];
 		while (this.waitingPool.length > 0) {
 			var packet = this.waitingPool.shift();
-			var res = this.network.get_nearest_resource(this, packet.destination);
-			if (res == null)
-				tmp.push(packet);
-			else {
-				var cable = this.network.get_cable(this, res);
-				cable.send_packet(this, packet);
-			}
+			if (packet.state) {
+				var res = this.network.get_nearest_resource(this, packet.destination);
+				if (res == null)
+					tmp.push(packet);
+				else {
+					var cable = this.network.get_cable(this, res);
+					cable.send_packet(this, packet);
+			  }
+		  }
 		}
 
 		this.waitingPool = tmp;
+	}
+
+	removefromWaiting(packet) {
+		var pos = this.waitingPool.indexOf(packet);
+		if (pos >= 0) {
+			this.waitingPool = this.waitingPool.splice(i,1);
+		}
+		graphicsManager.arcUpdate(this);
 	}
 
 	create_request() {

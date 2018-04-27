@@ -8,6 +8,7 @@ class Panel {
 
 	setHeader(newHeader) {
 		this.header.value = newHeader;
+		this.header.centerHorizontally();
 	}
 
 	moveTo(x, y) {

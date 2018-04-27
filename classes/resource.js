@@ -9,10 +9,11 @@ class ResourceUnit {
 
 class Resource extends Node {
 	constructor(network, x, y, resource_unit) {
-		super(network, x, y);
+		super(network, x, y, "resource");
 		this.resource_unit = resource_unit;
 		this.color = this.resource_unit.color;
 		graphicsManager.spriteInitResource(this);
+		this.capacity = Infinity;
 	}
 
 	info() {

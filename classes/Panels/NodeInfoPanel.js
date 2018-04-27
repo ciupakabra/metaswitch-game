@@ -17,12 +17,24 @@ class NodeInfoPanel extends Panel {
 	setToNode(node) {
 		this.changeInfo(node.info());
 
-		var x = gameGroup.worldPosition.x 
-			+ node.sprite.x * gameGroup.worldScale.x 
+		var x = gameGroup.worldPosition.x
+			+ node.sprite.x * gameGroup.worldScale.x
 			- this.panel.width / 2;
-		var y = gameGroup.worldPosition.y 
+		var y = gameGroup.worldPosition.y
 			+ (node.sprite.y - node.sprite.offsetY + node.sprite.height + 10) * gameGroup.worldScale.y;
-		this.moveTo(x, y);
+
+		//Correct panels that go off screen
+		var xpos = x; var ypos = y;
+		if (xpos + this.panel.width > game.width) {
+			xpos = game.width - this.panel.width;
+		} else if (xpos < 0) {
+			xpos = 0;
+		}
+		if (y + this.panel.height > game.height) {
+			ypos = game.height - this.panel.height;
+		}
+
+		this.moveTo(xpos, ypos);
 	}
 }
 
@@ -31,8 +43,11 @@ function nodeInfoClickListener() {
 }
 
 function nodeInfoOverListener(node) {
-	nodeInfoPanel.setToNode(node);
-	nodeInfoPanel.visible = true;
+	if (node.type == "server") {
+	} else {
+		nodeInfoPanel.setToNode(node);
+		nodeInfoPanel.visible = true;
+	}
 }
 
 function nodeInfoOutListener() {

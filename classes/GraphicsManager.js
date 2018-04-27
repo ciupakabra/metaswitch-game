@@ -1,9 +1,12 @@
 class GraphicsManager {
-	constructor() {
+	constructor() {}
+
+	satisfactionBarInit() {
 		this.satBarGraphics = game.make.graphics();
-		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4;
+		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4 - 37;
 
 		var graphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
+		ui.add(graphics);
 		graphics.alpha = 0.4;
 		graphics.beginFill(0x6C6C6C);
 		graphics.lineStyle(3, 0x4C4C4C, 1);
@@ -11,10 +14,10 @@ class GraphicsManager {
 	}
 
 	spriteInitServer(node) {
-		node.graphicsGroup = game.add.group(gameGroup);
+		node.graphicsGroup = game.add.group(nodes);
 
 		node.graphics = game.add.graphics(node.x, node.y);
-		node.graphicsGroup.add(node.graphics);
+		nodes.add(node.graphics);
 
 		node.sprite = node.graphicsGroup.create(node.x, node.y, 'server');
 		node.sprite.anchor.set(0.5, 0.5);
@@ -77,7 +80,7 @@ class GraphicsManager {
 	}
 
 	arcUpdate(node) {
-		var nodeSpace = 50;
+		var nodeSpace = node.capacity;
 
 		var angleTo = Math.min(360 * network.packetsInNode(node)/nodeSpace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
@@ -92,10 +95,11 @@ class GraphicsManager {
 
 	spriteInitCable(cable) {
 		cable.graphics = game.make.graphics();
-		cable.graphics.lineStyle(1, 0xffffff);
+		cable.graphics.lineStyle(2, 0xffffff);
 		cable.graphics.moveTo(cable.node_1.x, cable.node_1.y);
 		cable.graphics.lineTo(cable.node_2.x, cable.node_2.y);
 		cable.graphics.endFill();
+		cable.graphics.tint = CABLE_COLORS[0];
 
 		cable.graphics.inputEnabled = true;
 
@@ -142,6 +146,7 @@ class GraphicsManager {
 			Phaser.Easing.Linear.NONE,
 			true
 		);
+		packet.sprite.tween = tween;
 		tween.onComplete.add(function() {
 			this.travelling = false;
 			this.sprite.destroy();
@@ -180,10 +185,8 @@ class GraphicsManager {
 				curCount += deadPackets[i];
 			}
 		}
-
-
-
 	}
+
 	createSillhouette(node) {
 		var bmd = game.make.bitmapData()
 		bmd.load(node.sprite.key);
@@ -202,26 +205,54 @@ class GraphicsManager {
 
 		node.graphicsGroup.bringToTop(node.sprite);
 	}
-}
 
-function mouseOverListener(sprite) {
-	if (!sprite.node.clicked) {
-		sprite.node.sillhouette.tint = 0xfffab0;
-		sprite.node.sillhouette.visible = true;
+	newCityTextInit() {
+		this.newCityText = game.add.text(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 4 + 32, "A New City Appears!");
+		this.newCityText.font = 'Lato';
+		this.newCityText.fontSize = 60;
+		this.newCityText.stroke = '#404040';
+		this.newCityText.strokeThickness = 4;
+		this.newCityText.fill = '#505050';
+		this.newCityText.alpha = 0;
+		this.timer = game.time.create(false);
+		foreverTimers.push(this.timer);
+		this.timer.start();
+		ui.add(this.newCityText);
 	}
 
-	nodeInfoOverListener(sprite.node);
+	newCityText() {
+		var newCityTimer
+		newCityTimer = this.timer.loop(50, function(text) {
+			if (text.alpha < 1) {text.alpha = Math.min(1, text.alpha + 0.05)}
+			else {this.timer.remove(newCityTimer)}
+		}, this, this.newCityText);
+
+		this.timer.add(3000, function(text) {
+			newCityTimer = this.timer.loop(100, function(text) {
+				if (text.alpha > 0) {text.alpha -= 0.05}
+				else {this.timer.remove(newCityTimer);}
+			}, this, this.newCityText);
+		}, this);
+	}
+
+}
+
+
+function mouseOverListener(sprite) {
+	sprite.node.sillhouette.tint = 0xfffab0;
+	sprite.node.sillhouette.visible = true;
 }
 
 function mouseOutListener(sprite) {
 	if (!sprite.node.clicked) {
 		sprite.node.sillhouette.visible = false;
 	}
-
-	nodeInfoOutListener();
 }
 
 function mouseClickListener(sprite) {
+	game.nodeclicked = sprite.node;
+	game.buttonPress = true;
+	/*
 	if (!sprite.node.clicked) {
 		sprite.node.sillhouette.tint = 0xffff00;
 		sprite.node.sillhouette.visible = true;
@@ -230,7 +261,14 @@ function mouseClickListener(sprite) {
 		sprite.node.sillhouette.visible = false
 		sprite.node.clicked = false;
 	}
-
-	nodeInfoClickListener();
-	shopNodeClickListener(sprite.node);
+	*/
+	if (game.cableMode) {
+		shopCablePanel.enableButton(sprite.node);
+	} else if (sprite.node.type == "server") {
+		nodeInfoServerPanel.setToNode(sprite.node);
+	} else if (sprite.node.type == "resource"){
+		nodeResourcePanel.setToNode(sprite.node);
+  } else {
+		nodeCityPanel.setToNode(sprite.node);
+	}
 }
