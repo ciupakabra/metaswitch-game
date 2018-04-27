@@ -235,9 +235,9 @@ function create() {
   cursors = game.input.keyboard.createCursorKeys();
 	buttonPause = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 1, 0, 1, 0);
 	buttonPause.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = false; buttonPlay.visible = true;}, this);
+	buttonPause.visible = false;
 	buttonPlay = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 3, 2, 3, 2);
 	buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
-	buttonPlay.visible = false;
 	graphicsManager = new GraphicsManager();
 	worldGenerator = new WorldGenerator();
 	gameGroup = game.add.group();
@@ -310,6 +310,8 @@ function create() {
 	graphicsManager.newCityTextInit();
 
 	gameGroup.scale.set(worldScale);
+
+	pause();
 }
 
 function update() {
@@ -357,6 +359,11 @@ function pause() {
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
 		if (game.origDragPoint) {
+			var xChange = game.origDragPoint.x - game.input.activePointer.position.x;
+			var yChange = game.origDragPoint.y - game.input.activePointer.position.y;
+			if (Math.abs(xChange) + Math.abs(yChange) > 2) {
+				game.drag = true;
+			}
 			gameGroup.x -= game.origDragPoint.x - game.input.activePointer.position.x;
 			gameGroup.y -= game.origDragPoint.y - game.input.activePointer.position.y;
 		}
@@ -401,8 +408,10 @@ function generalClickCheck() {
 	if (game.input.activePointer.isUp) {
 		if (game.clicked && !game.buttonPress) {
 			if (!game.cableMode) {
-				shopServerPanel.nowUp = !shopServerPanel.nowUp;
-				shopServerPanel.setToNode(null);
+				if (!game.drag) {
+					shopServerPanel.nowUp = !shopServerPanel.nowUp;
+					shopServerPanel.setToNode(null);
+				}
 			} else {
 				game.cableMode = false;
 				game.currentActivePanel.visible = false;
@@ -410,6 +419,7 @@ function generalClickCheck() {
 			}
 			shopCablePanel.visible = false;
 		}
+		game.drag = false;
 		game.buttonPress = false;
 		game.clicked = false;
 		game.nodeclicked = null;
