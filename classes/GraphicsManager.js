@@ -6,7 +6,7 @@ class GraphicsManager {
 		this.satBarWidth = game.width - (3 * PANEL_MARGIN + STATUS_PANEL_WIDTH) - 4 - 37;
 
 		var graphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
-		satisfactionBar.add(graphics);
+		ui.add(graphics);
 		graphics.alpha = 0.4;
 		graphics.beginFill(0x6C6C6C);
 		graphics.lineStyle(3, 0x4C4C4C, 1);
@@ -185,10 +185,8 @@ class GraphicsManager {
 				curCount += deadPackets[i];
 			}
 		}
-
-
-
 	}
+
 	createSillhouette(node) {
 		var bmd = game.make.bitmapData()
 		bmd.load(node.sprite.key);
@@ -207,7 +205,38 @@ class GraphicsManager {
 
 		node.graphicsGroup.bringToTop(node.sprite);
 	}
+
+	newCityTextInit() {
+		this.newCityText = game.add.text(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 4 + 32, "A New City Appears!");
+		this.newCityText.font = 'Lato';
+		this.newCityText.fontSize = 60;
+		this.newCityText.stroke = '#404040';
+		this.newCityText.strokeThickness = 4;
+		this.newCityText.fill = '#505050';
+		this.newCityText.alpha = 0;
+		this.timer = game.time.create(false);
+		foreverTimers.push(this.timer);
+		this.timer.start();
+		ui.add(this.newCityText);
+	}
+
+	newCityText() {
+		var newCityTimer
+		newCityTimer = this.timer.loop(50, function(text) {
+			if (text.alpha < 1) {text.alpha = Math.min(1, text.alpha + 0.05)}
+			else {this.timer.remove(newCityTimer)}
+		}, this, this.newCityText);
+
+		this.timer.add(3000, function(text) {
+			newCityTimer = this.timer.loop(100, function(text) {
+				if (text.alpha > 0) {text.alpha -= 0.05}
+				else {this.timer.remove(newCityTimer);}
+			}, this, this.newCityText);
+		}, this);
+	}
+
 }
+
 
 function mouseOverListener(sprite) {
 	sprite.node.sillhouette.tint = 0xfffab0;

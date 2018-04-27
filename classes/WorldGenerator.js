@@ -166,6 +166,7 @@ class WorldGenerator {
 	newCitiesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
 		this.generateCities(1, currTypes);
+		graphicsManager.newCityText();
 		this.citySpeed = Math.max((this.citySpeed - 0.25), 1);
 
 		//game.time.events.add(Phaser.Timer.SECOND * 0.5, this.newCitiesTimer, this);

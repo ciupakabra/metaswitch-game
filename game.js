@@ -109,6 +109,8 @@ Phaser.Game.prototype.gameResumed = function (event) {
 		this._paused = false;
 		if (!paused) {
 			this.time.gameResumed();
+		} else {
+			foreverTimers.forEach(function(item) {console.log(item); item.resume();})
 		}
 		this.input.reset();
 		this.sound.unsetMute();
@@ -144,9 +146,12 @@ var packetCount = 0;
 var deadPackets = [];
 var paused = false;
 var release = [];
+var totalTime = 0;
+var currentCity = null;
 for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 	deadPackets[i] = 0;
 }
+var foreverTimers = [];
 
 function initialisation() {
 	currentCredit = 2000;
@@ -155,7 +160,10 @@ function initialisation() {
 	lifetimeCredit = 0;
 	deadPackets = [];
 	release = [];
+	totalTime = 0;
 	paused = false;
+	foreverTimers = [];
+	currentCity = null;
 	for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 		deadPackets[i] = 0;
 	}
@@ -236,11 +244,10 @@ function create() {
 	cables = game.add.group();
 	packets = game.add.group();
 	nodes = game.add.group();
-	satisfactionBar = game.add.group();
-	buttons = game.add.group();
+	ui = game.add.group();
 
-	buttons.add(buttonPause);
-	buttons.add(buttonPlay);
+	ui.add(buttonPause);
+	ui.add(buttonPlay);
 
 	gameGroup.add(cables);
 	gameGroup.add(packets);
@@ -249,18 +256,14 @@ function create() {
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
 
-	this.pKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
-	this.pKey.onDown.add(function() {
-		cables.forEach(function(item) {
-			item.tint = 0x462912;
-		}, this)
-	});
-
-	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
-	this.oKey.onDown.add(function() {game.time.events.add(0, function() {currentCredit += 10;}, this)}, this);
-
 	this.iKey = game.input.keyboard.addKey(Phaser.Keyboard.I);
 	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
+
+	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
+	this.oKey.onDown.add(graphicsManager.newCityText, graphicsManager);
+
+	this.tabKey = game.input.keyboard.addKey(Phaser.Keyboard.TAB);
+	this.tabKey.onDown.add(moveToCity, this);
 
 	function mouseWheel(event) {
 		var cursorx = (gameGroup.x - game.input.activePointer.position.x)/worldScale;
@@ -295,9 +298,15 @@ function create() {
 
 	network = new Network();
 	worldGenerator.initGameWorld();
+	for (i = 0; currentCity == null; i++) {
+		if (network.nodes[i] instanceof City) {
+			currentCity = network.nodes[i];
+		}
+	}
 
 	createPanels();
 	graphicsManager.satisfactionBarInit();
+	graphicsManager.newCityTextInit();
 
 	gameGroup.scale.set(worldScale);
 }
@@ -306,6 +315,9 @@ function update() {
 	updateCamera();
 
 	generalClickCheck();
+	if (!paused) {
+		totalTime += game.time.elapsedMS;
+	}
 
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
 		game.currentActivePanel.setToNode(game.currentActivePanel.node);
@@ -319,6 +331,7 @@ function pause() {
 		paused = true;
 		game.time.gamePaused();
 		packets.forEach(function(item) {item.tween.pause();})
+		foreverTimers.forEach(function(item) {item.resume();})
 	} else {
 		paused = false;
 		game.time.gameResumed();
@@ -339,8 +352,19 @@ function updateCamera() {
 	}
 }
 
+function moveToCity() {
+	var i = network.nodes.indexOf(currentCity);
+	while (!(network.nodes[(i+1)%(network.nodes.length)] instanceof City)) {
+		i = (i+1)%(network.nodes.length)
+	}
+	currentCity = network.nodes[(i+1)%(network.nodes.length)];
+
+	gameGroup.x -= gameGroup.worldPosition.x + currentCity.sprite.x * gameGroup.worldScale.x - game.width / 2;
+	gameGroup.y -= gameGroup.worldPosition.y + currentCity.sprite.y * gameGroup.worldScale.y - game.height/2;
+}
+
 function render() {
-	//game.debug.pointer(game.input.activePointer);
+	game.debug.pointer(game.input.activePointer);
 }
 
 function generalClickCheck() {

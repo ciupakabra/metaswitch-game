@@ -87,6 +87,7 @@ class ShopCablePanel extends Panel {
           this.cable.graphics.tint = CABLE_COLORS[level - 1];
         } else if (level == 7) {
           var timer = game.time.create(false);
+          foreverTimers.push(timer);
           this.cable.timer = timer.loop(100, updateCable, this.cable, this.cable);
           this.cable.version = 2;
           function updateCable(cable) {
