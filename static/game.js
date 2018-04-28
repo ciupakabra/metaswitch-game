@@ -173,7 +173,7 @@ function update() {
 		//if their score is good enough for Metaswitch to be interested,
 		//they are prompted to submit their contact info
 			if (confirm("Submit your score!")) {
-				window.location.href = "submit.html";
+				window.location.href = "submit";
 			}
 			else{
 				window.location.href = "index.html";
