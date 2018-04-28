@@ -5,7 +5,14 @@ import os.path
 from time import strftime
 
 # app is an instance of the Flask class
-app = Flask(__name__)
+app = Flask(__name__, static_folder=".", static_url_path="")
+
+@app.after_request
+def request_no_caching(r):
+    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    r.headers['Pragma'] = 'no-cache'
+    r.headers["Expires"] = "0"
+    return r
 
 @app.route("/")
 def home():
@@ -87,10 +94,6 @@ def submit():
 #     comments = [[a[0],a[1],a[2]] for a in comments]
 #
 #     return render_template("all.html",posts=posts, comments=comments)
-
-# @app.route("/assets/server.png")
-# def test():
-#     return render_template("/assets/server.png")
 
 if __name__=="__main__":
     # set the instance variable debug to True
