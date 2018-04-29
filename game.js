@@ -1,7 +1,7 @@
 var config = {
 	renderer: Phaser.AUTO,
-	width: window.innerWidth * window.devicePixelRatio,
-	height: window.innerHeight * window.devicePixelRatio,
+	width: 900,
+	height: 600,
 }
 
 var bootConfig = {
@@ -110,7 +110,7 @@ Phaser.Game.prototype.gameResumed = function (event) {
 		if (!paused) {
 			this.time.gameResumed();
 		} else {
-			foreverTimers.forEach(function(item) {console.log(item); item.resume();})
+			foreverTimers.forEach(function(item) {item.resume();})
 		}
 		this.input.reset();
 		this.sound.unsetMute();
@@ -171,7 +171,7 @@ function initialisation() {
 	worldScale = 0.5;
 }
 WebFontConfig = {
-	active: function() {game.state.start('menu', menuConfig);},
+	active: function() {game.time.events.add(250, function() {game.state.start('menu', menuConfig)}, this)},
 	inactive: function() {game.state.start('menu', menuConfig);},
 	google: {
 		families: ['Lato'],
@@ -405,7 +405,7 @@ function moveToCity() {
 }
 
 function render() {
-	game.debug.pointer(game.input.activePointer);
+	// game.debug.pointer(game.input.activePointer);
 }
 
 function generalClickCheck() {
