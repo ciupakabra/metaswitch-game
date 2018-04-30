@@ -72,7 +72,15 @@ class GraphicsManager {
 				sum += node.p[i]["prob"];
 			}
 		}
-		node.graphicsGroup.add(graphics);
+
+
+
+        var tween = game.add.tween(graphics);
+        tween.to({rotation: 2*Math.PI}, 10000, 'Linear', true, 0, -1);
+		var tween2 = game.add.tween(graphics.scale);
+        tween2.to({x: 1.2, y: 1.2}, 5000, 'Linear', true, 0, -1, true);
+
+        node.graphicsGroup.add(graphics);
 
 		node.sprite.events.onInputOver.add(mouseOverListener);
 		node.sprite.events.onInputOut.add(mouseOutListener);
