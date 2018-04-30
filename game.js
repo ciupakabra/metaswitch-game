@@ -151,8 +151,37 @@ var submitConfig = {
 		 });
 		}, this);
 
+		function createButton(x, y, text, funct) {
+			button = game.add.button(x, y, 'button', function() {}, this, 1, 0, 1, 0);
+			button.onInputDown.add(funct, this);
+			text = game.add.text(x + 90, y + 30, text);
+			text.font = 'Lato';
+			text.anchor.setTo(0.5);
+			text.fontSize = 40;
+			return button;
+		}
+
+		button1 = createButton(100, 475, "Submit", function() {
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+		$.ajax({
+			url: "submit",
+			type: 'POST',
+			data: JSON.stringify(details),
+			success: function() {
+				alert("Your score has successfully been submitted to Metaswitch."); //alerts the user that game is over
+				game.state.start('menu');}
+	 });
+ });
+		button2 = createButton(375, 475, "Clear", function() {game.state.start('submit')});
+		button3 = createButton(650, 475, "Menu", function() {game.state.start('menu')});
+
+		button1.scale.setTo(0.3, 0.5);
+		button2.scale.setTo(0.3, 0.5);
+		button3.scale.setTo(0.3, 0.5);
+
 		this.cKey = game.input.keyboard.addKey(Phaser.Keyboard.C);
 		this.cKey.onDown.add(function() {first_input.setText(""); last_input.setText(""); email_input.setText("")}, this)
+
 	}
 }
 
@@ -238,7 +267,7 @@ for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 }
 var foreverTimers = [];
 var cursors;
-var submitCheck = false;
+//var submitCheck = false;
 
 function initialisation() {
 	currentCredit = 2000;
@@ -255,7 +284,7 @@ function initialisation() {
 		deadPackets[i] = 0;
 	}
 	worldScale = 0.5;
-	submitCheck = false;
+	//submitCheck = false;
 }
 WebFontConfig = {
 	active: function() {game.time.events.add(250, function() {game.state.start('menu', menuConfig)}, this)},
@@ -350,6 +379,7 @@ function create() {
 	this.iKey = game.input.keyboard.addKey(Phaser.Keyboard.I);
 	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
 
+//comment this out once submit debugging is complete
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 	this.oKey.onDown.add(function() {game.state.start('submit')}, this);
 
@@ -434,15 +464,16 @@ function update() {
 	var maxPenalty = 10;
 	var thresholdScore = 100;
 	var currentScore = 110; //currentScore is equivalent to the time they have survived
-	var redirect;
+	//var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
-		if (currentScore>=thresholdScore && !submitCheck){
-			submitCheck = true;
+		if (currentScore>=thresholdScore){ //&& !submitCheck){
+			//submitCheck = true;
 		//if their score is good enough for Metaswitch to be interested,
 		//they are prompted to submit their contact info
 			if (confirm("Submit your score now!")) {
-				redirect = 1;
+				//redirect = 1;
+				game.state.start('submit');
 			}
 			else{
 				game.state.start('menu');
@@ -450,7 +481,8 @@ function update() {
 		}
 		else {
 			alert("Game end has been triggered by high penalty"); //alerts the user that game is over
-			window.location.reload();
+			game.state.start('menu');
+			//window.location.reload();
 		}
 	}
 }
