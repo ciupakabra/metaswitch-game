@@ -160,7 +160,17 @@ var submitConfig = {
 			return button;
 		}
 
-		button1 = createButton(100, 475, "Submit", function() {game.state.start('menu')});
+		button1 = createButton(100, 475, "Submit", function() {
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+		$.ajax({
+			url: "submit",
+			type: 'POST',
+			data: JSON.stringify(details),
+			success: function() {
+				alert("Your score has successfully been submitted to Metaswitch."); //alerts the user that game is over
+				game.state.start('menu');}
+	 });
+ });
 		button2 = createButton(375, 475, "Clear", function() {game.state.start('submit')});
 		button3 = createButton(650, 475, "Menu", function() {game.state.start('menu')});
 
@@ -365,6 +375,7 @@ function create() {
 	this.iKey = game.input.keyboard.addKey(Phaser.Keyboard.I);
 	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
 
+//comment this out once submit debugging is complete
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 	this.oKey.onDown.add(function() {game.state.start('submit')}, this);
 
