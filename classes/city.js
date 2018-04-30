@@ -83,7 +83,7 @@ class City extends Node {
 	removefromWaiting(packet) {
 		var pos = this.waitingPool.indexOf(packet);
 		if (pos >= 0) {
-			this.waitingPool = this.waitingPool.splice(i,1);
+			this.waitingPool = this.waitingPool.splice(pos,1);
 		}
 		graphicsManager.arcUpdate(this);
 	}
