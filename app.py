@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 import sqlite3
 import populate
+import json
 import os.path
 from time import strftime
 
@@ -28,10 +29,17 @@ def submit():
     c = conn.cursor()
     # if title==None:
     #     error = False;
+    print(request)
     if request.method == "POST":
-        first = request.form["first"]
-        last = request.form["last"]
-        email = request.form["email"]
+        try:
+            data = request.get_json(force=True);
+            first = request.json.get("first")
+            last = request.json.get("last")
+            email = request.json.get("email")
+        except:
+            first = request.form["first"]
+            last = request.form["last"]
+            email = request.form["email"]
         #q = '''SELECT MAX(id) FROM users'''
         #maxID = c.execute(q).next()[0] #gets maxID in ID column to assign
                                        #a new unique ID

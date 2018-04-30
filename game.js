@@ -1,7 +1,7 @@
 var config = {
 	renderer: Phaser.AUTO,
-	width: window.innerWidth * window.devicePixelRatio,
-	height: window.innerHeight * window.devicePixelRatio,
+	width: 900,
+	height: 600,
 }
 
 var bootConfig = {
@@ -11,9 +11,11 @@ var bootConfig = {
 		game.load.spritesheet('buttonPause', 'assets/ui/menu/buttonsPause.png', 35, 35);
 		game.load.image('tutorial1', 'assets/ui/menu/tutorial1.png');
 		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
+		game.load.image('logo', 'assets/ui/menu/metaswitch-logo.png');
 
 		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 		slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
+		game.add.plugin(PhaserInput.Plugin);
 	}
 }
 
@@ -72,6 +74,87 @@ var aboutConfig = {
 	}
 }
 
+var submitConfig = {
+	create: function() {
+		var header = game.add.text(450, 40, header);
+		header.font = 'Lato';
+		header.anchor.setTo(0.5);
+		header.fontSize = 40;
+		header.text = "Thank You for Playing Net-a-switch, powered by"
+		header.fill = '#ffffff';
+
+		var image = game.add.image(450, 100, 'logo');
+		image.anchor.setTo(0.5);
+		image.scale.setTo(0.5);
+
+		var mainText = game.add.text(450, 230, mainText);
+		mainText.font = 'Lato';
+		mainText.anchor.setTo(0.5);
+		mainText.fontSize = 25;
+		mainText.text = "Metaswitch is a UK-based tech company that designs, develops, manufactures, and markets telecommunications software. Congratulations on your score! If you liked this game, we think you could be a good fit for a career at Metaswitch. Please check out our career page and submit your details below to keep in touch."
+		mainText.fill = '#ffffff';
+		mainText.wordWrap = true;
+		mainText.wordWrapWidth = 800;
+		mainText.align = 'center';
+
+		var first_input = game.add.inputField(80, 330, {
+			font: '30px Lato',
+			fill: '#ffffff',
+			width: 355,
+			height: 40,
+			placeHolder: 'First Name...',
+			padding: 10,
+			borderColor: '#505050',
+			backgroundColor: '#111111',
+			cursorColor: '#505050',
+			borderRadius: 5,
+			placeHolderColor: '#505050',
+		});
+
+		var last_input = game.add.inputField(465, 330, {
+			font: '30px Lato',
+			fill: '#ffffff',
+			width: 355,
+			height: 40,
+			placeHolder: 'Last Name...',
+			padding: 10,
+			borderColor: '#505050',
+			backgroundColor: '#111111',
+			cursorColor: '#505050',
+			borderRadius: 5,
+			placeHolderColor: '#505050',
+		});
+
+		var email_input = game.add.inputField(80, 400, {
+			font: '30px Lato',
+			fill: '#ffffff',
+			width: 740,
+			height: 40,
+			placeHolder: 'Enter your email address...',
+			padding: 10,
+			borderColor: '#505050',
+			backgroundColor: '#111111',
+			cursorColor: '#505050',
+			borderRadius: 5,
+			placeHolderColor: '#505050',
+		});
+
+		this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
+		this.oKey.onDown.add(function() {
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+			$.ajax({
+				url: "submit",
+				type: 'POST',
+				data: JSON.stringify(details),
+				success: function() {}
+		 });
+		}, this);
+
+		this.cKey = game.input.keyboard.addKey(Phaser.Keyboard.C);
+		this.cKey.onDown.add(function() {first_input.setText(""); last_input.setText(""); email_input.setText("")}, this)
+	}
+}
+
 var playConfig = {
 	preload: preload,
 	create: create,
@@ -110,7 +193,7 @@ Phaser.Game.prototype.gameResumed = function (event) {
 		if (!paused) {
 			this.time.gameResumed();
 		} else {
-			foreverTimers.forEach(function(item) {console.log(item); item.resume();})
+			foreverTimers.forEach(function(item) {item.resume();})
 		}
 		this.input.reset();
 		this.sound.unsetMute();
@@ -124,6 +207,7 @@ game.state.add('menu', menuConfig);
 game.state.add('tutorial', tutorialConfig);
 game.state.add('about', aboutConfig);
 game.state.add('game', playConfig);
+game.state.add('submit', submitConfig);
 
 game.state.start('boot');
 var worldScale = 0.8;
@@ -153,6 +237,7 @@ for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 }
 var foreverTimers = [];
 var cursors;
+var submitCheck = false;
 
 function initialisation() {
 	currentCredit = 2000;
@@ -169,9 +254,10 @@ function initialisation() {
 		deadPackets[i] = 0;
 	}
 	worldScale = 0.5;
+	submitCheck = false;
 }
 WebFontConfig = {
-	active: function() {game.state.start('menu', menuConfig);},
+	active: function() {game.time.events.add(250, function() {game.state.start('menu', menuConfig)}, this)},
 	inactive: function() {game.state.start('menu', menuConfig);},
 	google: {
 		families: ['Lato'],
@@ -261,7 +347,7 @@ function create() {
 	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
 
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
-	this.oKey.onDown.add(graphicsManager.newCityText, graphicsManager);
+	this.oKey.onDown.add(function() {game.state.start('submit')}, this);
 
 	this.tabKey = game.input.keyboard.addKey(Phaser.Keyboard.TAB);
 	this.tabKey.onDown.add(moveToCity, this);
@@ -347,22 +433,15 @@ function update() {
 	var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
-		if (currentScore>=thresholdScore){
+		if (currentScore>=thresholdScore && !submitCheck){
+			submitCheck = true;
 		//if their score is good enough for Metaswitch to be interested,
 		//they are prompted to submit their contact info
 			if (confirm("Submit your score now!")) {
 				redirect = 1;
 			}
 			else{
-				redirect = 0;
-			}
-			if (redirect){
-				//window.location.href = "submit";
-				window.location.replace("submit");
-
-			}
-			else{
-				window.location.reload();
+				game.state.start('menu');
 			}
 		}
 		else {
@@ -415,7 +494,7 @@ function moveToCity() {
 }
 
 function render() {
-	game.debug.pointer(game.input.activePointer);
+	// game.debug.pointer(game.input.activePointer);
 }
 
 function generalClickCheck() {
@@ -454,4 +533,13 @@ function generalClickCheck() {
 		game.clicked = false;
 		game.nodeclicked = null;
 	}
+}
+
+function formatTime(millis) { //milliseconds -> MM:SS.XYZ
+	var end = String(millis % 1000);
+	if(end.length < 3) {end = "0".repeat(3-end.length)+end;}
+	var secs = String(Math.floor(millis/1000) % 60);
+	if (secs.length === 1) {secs = "0" + secs;}
+	var mins = String(Math.floor(millis/60000));
+	return mins + ":" + secs + "." + end;
 }
