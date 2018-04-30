@@ -168,8 +168,9 @@ var submitConfig = {
 			type: 'POST',
 			data: JSON.stringify(details),
 			success: function() {
+				game.state.start('menu');
 				alert("Your score has successfully been submitted to Metaswitch."); //alerts the user that game is over
-				game.state.start('menu');}
+			}
 	 });
  });
 		button2 = createButton(375, 475, "Clear", function() {game.state.start('submit')});
@@ -256,6 +257,7 @@ var worldGenerator;
 var currentCredit = 2000;
 var lifetimeCredit = 0;
 var currentPenalty = 0;
+var maxPenalty = 500;
 var packetCount = 0;
 var deadPackets = [];
 var paused = false;
@@ -461,17 +463,15 @@ function update() {
 
 	statusPanel.updateCredit(currentCredit);
 
-	var maxPenalty = 10;
-	var thresholdScore = 100;
-	var currentScore = 110; //currentScore is equivalent to the time they have survived
+	var thresholdScore = 5000;
 	//var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
-		if (currentScore>=thresholdScore){ //&& !submitCheck){
+		if (lifetimeCredit>=thresholdScore){ //&& !submitCheck){
 			//submitCheck = true;
-		//if their score is good enough for Metaswitch to be interested,
-		//they are prompted to submit their contact info
-			if (confirm("Submit your score now!")) {
+			//if their score is good enough for Metaswitch to be interested,
+			//they are prompted to submit their contact info
+			if (confirm("Game over!" + "\n" + "Would you like to submit your score?")) {
 				//redirect = 1;
 				game.state.start('submit');
 			}
@@ -480,7 +480,7 @@ function update() {
 			}
 		}
 		else {
-			alert("Game end has been triggered by high penalty"); //alerts the user that game is over
+			alert("Game over!" + "\n" + "You have let too many packets die!" + "\n" + "Now returning to main menu."); //alerts the user that game is over
 			game.state.start('menu');
 			//window.location.reload();
 		}

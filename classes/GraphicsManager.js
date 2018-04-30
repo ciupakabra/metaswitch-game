@@ -174,8 +174,6 @@ class GraphicsManager {
 	}
 
 	satisfactionBarUpdate() {
-		var limit = 500;
-
 		this.satBarGraphics.destroy();
 		this.satBarGraphics = game.add.graphics(2 * PANEL_MARGIN + STATUS_PANEL_WIDTH + 2, PANEL_MARGIN + 2);
 
@@ -188,7 +186,7 @@ class GraphicsManager {
 				this.satBarGraphics.alpha = 0.6;
 				this.satBarGraphics.beginFill(RESOURCE_COLORS[i]);
 				this.satBarGraphics.lineStyle(0, 0x000000, 1);
-				this.satBarGraphics.drawRect((curCount/limit)*this.satBarWidth, 0, (deadPackets[i])/limit*this.satBarWidth, 30);
+				this.satBarGraphics.drawRect((curCount/maxPenalty)*this.satBarWidth, 0, (deadPackets[i])/maxPenalty*this.satBarWidth, 30);
 				this.satBarGraphics.endFill();
 				curCount += deadPackets[i];
 			}
