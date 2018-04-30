@@ -9,6 +9,7 @@ var bootConfig = {
 		game.load.spritesheet('button', 'assets/ui/menu/buttons.png', 600, 150);
 		game.load.spritesheet('buttonSmall', 'assets/ui/menu/buttonsSmall.png', 250, 125);
 		game.load.spritesheet('buttonPause', 'assets/ui/menu/buttonsPause.png', 35, 35);
+		game.load.spritesheet('buttonReload', 'assets/ui/menu/buttonsReload.png',35,35);
 		game.load.image('tutorial1', 'assets/ui/menu/tutorial1.png');
 		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
 		game.load.image('logo', 'assets/ui/menu/metaswitch-logo.png');
@@ -324,6 +325,8 @@ function create() {
 	buttonPause.visible = false;
 	buttonPlay = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 3, 2, 3, 2);
 	buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
+	buttonReload = game.add.button(game.width - 40, 56, 'buttonReload', function() {}, this, 1,0,1,0);
+	buttonReload.onInputDown.add(function() {game.state.start('menu')});
 	graphicsManager = new GraphicsManager();
 	worldGenerator = new WorldGenerator();
 	gameGroup = game.add.group();
@@ -335,6 +338,7 @@ function create() {
 
 	ui.add(buttonPause);
 	ui.add(buttonPlay);
+	ui.add(buttonReload);
 
 	gameGroup.add(cables);
 	gameGroup.add(packets);
