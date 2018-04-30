@@ -445,3 +445,12 @@ function generalClickCheck() {
 		game.nodeclicked = null;
 	}
 }
+
+function formatTime(millis) { //milliseconds -> MM:SS.XYZ
+	var end = String(millis % 1000);
+	if(end.length < 3) {end = "0".repeat(3-end.length)+end;}
+	var secs = String(Math.floor(millis/1000) % 60);
+	if (secs.length === 1) {secs = "0" + secs;}
+	var mins = String(Math.floor(millis/60000));
+	return mins + ":" + secs + "." + end;
+}
