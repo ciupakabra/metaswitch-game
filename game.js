@@ -344,20 +344,30 @@ function update() {
 	var maxPenalty = 10;
 	var thresholdScore = 100;
 	var currentScore = 110; //currentScore is equivalent to the time they have survived
+	var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
 		if (currentScore>=thresholdScore){
 		//if their score is good enough for Metaswitch to be interested,
 		//they are prompted to submit their contact info
-			if (confirm("Submit your score!")) {
-				window.location.href = "submit";
+			if (confirm("Submit your score now!")) {
+				redirect = 1;
 			}
 			else{
-				window.location.href = "index.html";
+				redirect = 0;
+			}
+			if (redirect){
+				//window.location.href = "submit";
+				window.location.replace("submit");
+
+			}
+			else{
+				window.location.reload();
 			}
 		}
 		else {
 			alert("Game end has been triggered by high penalty"); //alerts the user that game is over
+			window.location.reload();
 		}
 	}
 }
