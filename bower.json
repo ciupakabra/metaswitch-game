@@ -1,0 +1,30 @@
+{
+	"name": "metaswitch-game",
+	"description": "A group practical project sponsored by Metaswitch",
+	"main": "",
+	"authors": [
+		"Andrius Ovsianas <andrius.ovsianas@merton.ox.ac.uk>",
+		"Joseph Gardiner <joseph.gardiner@oriel.ox.ac.uk>",
+		"Jack Arthur <jack.arthur@keble.ox.ac.uk>",
+		"Ethan Martin <ethan.martin@stcatz.ox.ac.uk>",
+		"Jan Mirkiewicz <jan.mirkiewicz@sjc.ox.ac.uk>",
+		"Justin Strauss <justin.strauss@st-annes.ox.ac.uk>"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/ciupakabra/metaswitch-game",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"google-closure-library": "*",
+		"phaser-ce": "^2.10.3",
+		"prob.js": "^1.0.6",
+		"random": "^1.0.8"
+	}
+}
+
