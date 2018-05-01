@@ -1,4 +1,3 @@
-goog.require("goog.structs.PriorityQueue")
 class Network {
 	constructor() {
 		this.nodes = [];
@@ -48,10 +47,16 @@ class Network {
 		}
 
 		this.distances[source][source] = 0;
-		var queue = new goog.structs.PriorityQueue();
-		queue.enqueue(0, source);
-		while (!queue.isEmpty()) {
-			var v = queue.dequeue();
+
+		var queue = new PriorityQueue({
+			comparator: function(a, b) {
+				return a[0] - b[0];
+			}
+		});
+
+		queue.queue([0, source]);
+		while (queue.length != 0) {
+			var v = queue.dequeue()[1];
 
 			if (visited[v])
 				continue;
@@ -71,7 +76,7 @@ class Network {
 				if (this.distances[source][v] + weight < this.distances[source][u]) {
 					this.distances[source][u] = this.distances[source][v] + weight;
 					this.edges[source][u] = edge;
-					queue.enqueue(this.distances[source][u], u);
+					queue.queue([this.distances[source][u], u]);
 				}
 			}
 		}

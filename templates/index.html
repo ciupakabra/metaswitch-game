@@ -4,33 +4,15 @@
     <meta charset="UTF-8" />
     <title>Net-a-switch</title>
     <link rel="icon" href="/static/Logo.png">
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/sprintf/dist/sprintf.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/random/lib/random.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/prob.js/dist/prob-min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/google-closure-library/closure/goog/base.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/phaser-ce/build/phaser.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/slick-ui/dist/slick-ui.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'bower_components/phaser-input/phaser-input.min.js') }}"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'tutorial.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/network.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/packet.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/cable.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/node.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/city.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/resource.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/server.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/Panel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/StatusPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/NodeInfoPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/NodeInfoServerPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/NodeCityPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/NodeResourcePanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/ShopCablePanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/ShopServerPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/Panels/TutorialPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/GraphicsManager.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'classes/WorldGenerator.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/random.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/prob-min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/priority-queue.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/phaser.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/phaser-input.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'libs/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'build/slick-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'build/classes.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'build/tutorial.min.js') }}"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -38,6 +20,6 @@
     </style>
 </head>
 <body>
-	    <script type="text/javascript" src="{{ url_for('static', filename = 'game.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'build/game.min.js') }}"></script>
 </body>
 </html>
