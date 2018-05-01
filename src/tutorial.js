@@ -34,8 +34,8 @@ function create() {
 
 	game.network = new Network();
 	graphicsManager.network = game.network;
-	// game.time.gamePaused();
-	// paused = true;
+
+	paused = false;
 }
 
 function changeTutorialStep() {
@@ -230,9 +230,9 @@ function changeTutorialStep() {
 
 function update() {
 	if (tutorialScreen >= 8) {
-		totalTime += game.time.elapsedMS;
+		game.statusPanel.updateCredit(currentCredit);
 		if (!paused) {
-				game.statusPanel.updateCredit(currentCredit);
+			totalTime += game.time.elapsedMS;
 		}
 	}
 }

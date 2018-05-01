@@ -13,6 +13,9 @@ class ShopCablePanel extends Panel {
     this.nodeDest = null;
     this.existingCable = false;
 		this.xpos = x; this.ypos = y;
+		this.timer = game.time.create(false);
+		this.timer.start();
+		foreverTimers.push(this.timer);
 	}
 
 	changeInfo(info) {
@@ -62,7 +65,7 @@ class ShopCablePanel extends Panel {
       if (currentCredit < this.cableCost()) {
 				this.buyCableButtonText.value = "Insufficient Funds";
 				this.buyCableButtonText.center();
-				game.time.events.add(
+				this.timer.add(
 					Phaser.Timer.SECOND * 1.3,
 					function() {
             if (this.existingCable) {
