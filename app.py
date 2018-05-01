@@ -64,6 +64,7 @@ def submit():
             email = request.form["email"]
             score = request.form["score"]
             elapsed = request.form["elapsed"]
+
         #q = '''SELECT MAX(id) FROM users'''
         #maxID = c.execute(q).next()[0] #gets maxID in ID column to assign
                                        #a new unique ID
