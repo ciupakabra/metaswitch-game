@@ -7,8 +7,8 @@ import os.path
 from time import strftime
 
 # Database type
-dbType = 'local' # use a local sqlite database
-#dbType = 'remote' # use a remote database, specify credentials below
+#dbType = 'local' # use a local sqlite database
+dbType = 'remote' # use a remote database, specify credentials below
 
 # Remote DB Config (if appropriate)
 dbHost = '127.0.0.1'
@@ -84,7 +84,7 @@ def submit():
         # q = "SELECT title FROM users"
         # result = c.execute(q)
         # result = [o for o in result][::-1]
-        #return render_template("highscores.html",users=users)#,titles=result,haserror=error)
+        return render_template("highscores.html")#,titles=result,haserror=error)
     else:
         # #get user whose title matches the url
         # t = title.replace("_"," ")

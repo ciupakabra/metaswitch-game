@@ -198,19 +198,28 @@ class Network {
 
 	get_nearest_resource(origin, resource_unit) {
 		var origin_idx = this.nodes.indexOf(origin);
-		var nearest = null;
-		var distance = Infinity;
-
+        var maxDistance = 30;
+        var available = [];
 		for (var i = 0;i < this.nodes.length;++i) {
 			var node = this.nodes[i];
 			if (node instanceof Resource) {
-				if (node.resource_unit == resource_unit && this.distances[origin_idx][i] < distance) {
-					nearest = node;
-					distance = this.distances[origin_idx][i];
+				if (node.resource_unit == resource_unit && this.distances[origin_idx][i] < maxDistance) {
+					available.push({'node': node, 'distance': this.distances[origin_idx][i]});
 				}
 			}
 		}
 
-		return nearest;
+        if (available.length==0) { return null; }
+        available=available.map(function(x){ return {'node': x.node, 'distance': 1/((x.distance)**2)}});
+        var sum = available.map(function(x){return x.distance}).reduce(function(a,b){return a+b},0);
+        available = available.map(function(x){ return {'node': x.node, 'distance': x.distance/sum}});
+        var numChoice = Math.random();
+        var i = 0;
+        var cumulative = available[i].distance
+        while (cumulative < numChoice){
+            i+=1
+            cumulative += available[i].distance
+        }
+		return available[i].node;
 	}
 }
