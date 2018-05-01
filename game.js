@@ -10,9 +10,13 @@ var bootConfig = {
 		game.load.spritesheet('buttonSmall', 'assets/ui/menu/buttonsSmall.png', 250, 125);
 		game.load.spritesheet('buttonPause', 'assets/ui/menu/buttonsPause.png', 35, 35);
 		game.load.spritesheet('buttonReload', 'assets/ui/menu/buttonsReload.png',35,35);
-		game.load.image('tutorial1', 'assets/ui/menu/tutorial1.png');
 		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
 		game.load.image('logo', 'assets/ui/menu/metaswitch-logo.png');
+		game.load.image('arrow', 'assets/ui/menu/arrow.png');
+
+		this.load.image('server', 'assets/server.png');
+		this.load.image('resource', 'assets/resource.png');
+		this.load.image('city', 'assets/city.png');
 
 		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 		slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
@@ -34,23 +38,9 @@ var menuConfig = {
 		}
 
 		createButton(150, 34, "Play Game", function() {game.state.start('game')});
-		createButton(150, 218, "Tutorial", function() {game.state.start('tutorial')});
+		createButton(150, 218, "Tutorial", function() {tutorialOn = true; tutorialScreen = 0; game.state.start('tutorial')});
 		createButton(150, 402, "About Us", function() {game.state.start('about')});
 
-	}
-}
-
-var tutorialConfig = {
-	create: function() {
-		game.stage.backgroundColor = 0x111111;
-		background = game.add.tileSprite(0, 0, 900, 600, 'tutorial1');
-
-		button = game.add.button(325, 450, 'buttonSmall', function() {}, this, 1, 0, 1, 0);
-		button.onInputDown.add(function() {game.state.start('menu')}, this);
-		text = game.add.text(450, 512, "Menu");
-		text.font = 'Lato';
-		text.anchor.setTo(0.5);
-		text.fontSize = 60;
 	}
 }
 
@@ -140,17 +130,6 @@ var submitConfig = {
 			placeHolderColor: '#505050',
 		});
 
-		this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
-		this.oKey.onDown.add(function() {
-			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
-			$.ajax({
-				url: "submit",
-				type: 'POST',
-				data: JSON.stringify(details),
-				success: function() {}
-		 });
-		}, this);
-
 		function createButton(x, y, text, funct) {
 			button = game.add.button(x, y, 'button', function() {}, this, 1, 0, 1, 0);
 			button.onInputDown.add(funct, this);
@@ -162,7 +141,7 @@ var submitConfig = {
 		}
 
 		button1 = createButton(100, 475, "Submit", function() {
-			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text, 'score': lifetimeCredit};
 		$.ajax({
 			url: "submit",
 			type: 'POST',
@@ -254,6 +233,8 @@ var worldGenerator;
 
 // Game vars
 
+var tutorialOn = false;
+var tutorialScreen = 0;
 var currentCredit = 2000;
 var lifetimeCredit = 0;
 var currentPenalty = 0;
@@ -282,6 +263,7 @@ function initialisation() {
 	paused = false;
 	foreverTimers = [];
 	currentCity = null;
+	tutorialOn = false;
 	for (var i = 0;i < RESOURCE_COLORS.length;++i) {
 		deadPackets[i] = 0;
 	}
@@ -298,10 +280,6 @@ WebFontConfig = {
 
 
 function preload() {
-	this.load.image('server', 'assets/server.png');
-	this.load.image('resource', 'assets/resource.png');
-	this.load.image('city', 'assets/city.png');
-
 	// Leave this at the bottom of the method
 	slickUI.load('assets/ui/kenney/kenney.json');
 }
@@ -420,6 +398,7 @@ function create() {
 
 
 	network = new Network();
+	graphicsManager.network = network;
 	worldGenerator.initGameWorld();
 	for (i = 0; currentCity == null; i++) {
 		if (network.nodes[i] instanceof City) {
@@ -501,6 +480,7 @@ function pause() {
 		release = [];
 	}
 }
+
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
 		if (game.origDragPoint) {

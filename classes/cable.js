@@ -57,7 +57,7 @@ class Cable {
 			var packet = this.B1.shift();
 			packet.travelling = true;
 			graphicsManager.spriteInitPacket(packet, this, this.node_1, this.node_2);
-			if (network.packetsInNode(this.node_1) > this.node_1.capacity) {
+			if (this.network.packetsInNode(this.node_1) > this.node_1.capacity) {
 				packet.rewardPenalty();
 			}
 
@@ -72,7 +72,7 @@ class Cable {
 			var packet = this.B2.shift();
 			packet.travelling = true;
 			graphicsManager.spriteInitPacket(packet, this, this.node_2, this.node_1);
-			if (network.packetsInNode(this.node_2) > this.node_2.capacity) {
+			if (this.network.packetsInNode(this.node_2) > this.node_2.capacity) {
 				packet.rewardPenalty();
 			}
 

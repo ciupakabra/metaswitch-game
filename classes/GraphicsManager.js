@@ -28,7 +28,9 @@ class GraphicsManager {
 
 		node.sprite.events.onInputOver.add(mouseOverListener);
 		node.sprite.events.onInputOut.add(mouseOutListener);
-		node.sprite.events.onInputDown.add(mouseClickListener);
+		if (!tutorialOn) {
+			node.sprite.events.onInputDown.add(mouseClickListener);
+		}
 	}
 
 	spriteInitResource(node) {
@@ -46,7 +48,9 @@ class GraphicsManager {
 
 		node.sprite.events.onInputOver.add(mouseOverListener);
 		node.sprite.events.onInputOut.add(mouseOutListener);
-		node.sprite.events.onInputDown.add(mouseClickListener);
+		if (!tutorialOn) {
+			node.sprite.events.onInputDown.add(mouseClickListener);
+		}
 	}
 
 	spriteInitCity(node) {
@@ -82,15 +86,20 @@ class GraphicsManager {
 
         node.graphicsGroup.add(graphics);
 
+
 		node.sprite.events.onInputOver.add(mouseOverListener);
 		node.sprite.events.onInputOut.add(mouseOutListener);
-		node.sprite.events.onInputDown.add(mouseClickListener);
+		if (!tutorialOn) {
+			node.sprite.events.onInputDown.add(mouseClickListener);
+		}
 	}
 
 	arcUpdate(node) {
+		if (tutorialOn && (tutorialScreen != 15)) {node.graphics.destroy(); return false};
+
 		var nodeSpace = node.capacity;
 
-		var angleTo = Math.min(360 * network.packetsInNode(node)/nodeSpace, 359.99);
+		var angleTo = Math.min(360 * this.network.packetsInNode(node)/nodeSpace, 359.99);
 		node.graphicsGroup.remove(node.graphics);
 		node.graphics.destroy();
 		node.graphics = game.add.graphics(node.x, node.y);

@@ -34,7 +34,9 @@ class Packet {
 				this.cable.removePacket(this.cableSide, this);
 			}
 		}
-		network.delete_packet(this);
+		if (!tutorialOn) {
+		  network.delete_packet(this);
+	  }
 
 		if (this.content == null) {
 			deadPackets[this.destination.type] += 1;
@@ -48,6 +50,6 @@ class Packet {
 	}
 
 	rewardPenalty() {
-		this.penalty = Math.min(5, this.penalty - 2);
+		this.penalty = Math.min(5, this.penalty + 2);
 	}
 }

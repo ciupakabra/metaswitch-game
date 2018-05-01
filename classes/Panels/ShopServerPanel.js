@@ -93,7 +93,6 @@ class ShopServerPanel extends Panel {
             1
 					);
 
-					network.add_node(server);
           game.currentActivePanel = null;
           this.visible = false;
           this.nowUp = false;

@@ -36,10 +36,13 @@ def submit():
             first = request.json.get("first")
             last = request.json.get("last")
             email = request.json.get("email")
+            score = request.json.get("score")
+            print(score)
         except:
             first = request.form["first"]
             last = request.form["last"]
             email = request.form["email"]
+            score = 100
         #q = '''SELECT MAX(id) FROM users'''
         #maxID = c.execute(q).next()[0] #gets maxID in ID column to assign
                                        #a new unique ID
@@ -50,7 +53,6 @@ def submit():
         #    if t in titleCheck:
         #        error = True
         #    else:
-        score = 100
         clock = strftime("%I:%M:%S %m/%d/%Y")
         populate.insert_score(first,last,email,score,clock)
 
