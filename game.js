@@ -142,7 +142,7 @@ var submitConfig = {
 
 		this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 		this.oKey.onDown.add(function() {
-			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text, 'score':lifetimeCredit, 'elapsed': totalTime};
 			$.ajax({
 				url: "submit",
 				type: 'POST',
@@ -162,7 +162,7 @@ var submitConfig = {
 		}
 
 		button1 = createButton(100, 475, "Submit", function() {
-			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text};
+			var details = {'first': first_input.text._text, 'last': last_input.text._text, 'email': email_input.text._text, 'score':lifetimeCredit, 'elapsed': totalTime};
 		$.ajax({
 			url: "submit",
 			type: 'POST',

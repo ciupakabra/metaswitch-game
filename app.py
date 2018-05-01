@@ -1,9 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 import sqlite3
 import populate
+import MySQLdb
 import json
 import os.path
 from time import strftime
+
+# Database type
+dbType = 'local' # use a local sqlite database
+#dbType = 'remote' # use a remote database, specify credentials below
+
+# Remote DB Config (if appropriate)
+dbHost = '127.0.0.1'
+dbName = 'ms_game_scores'
+dbUsername = 'root'
+dbPassword = ''
 
 # app is an instance of the Flask class
 app = Flask(__name__, static_folder=".", static_url_path="")
@@ -19,13 +30,22 @@ def request_no_caching(r):
 def home():
         return render_template("index.html")
 
+
+
 @app.route("/submit",methods=["GET","POST"])
 #@app.route("/<title>",methods=["GET","POST"])
 def submit():
-    if not os.path.isfile("users.db"):
-        populate.setup()
-    #run populate.py only if users.db is not present
-    conn = sqlite3.connect("users.db")
+
+    if dbType=='local':
+        if not os.path.isfile("users.db"):
+            conn = sqlite3.connect("users.db")
+            populate.setup(conn)
+    try:
+        conn = sqlite3.connect("users.db") if dbType=='local' else MySQLdb.connect(dbHost,dbUsername,dbPassword,dbName)
+    except Exception as e:
+        print e
+    if dbType=='remote':
+        populate.setup(conn)
     c = conn.cursor()
     # if title==None:
     #     error = False;
@@ -36,10 +56,14 @@ def submit():
             first = request.json.get("first")
             last = request.json.get("last")
             email = request.json.get("email")
+            score = request.json.get("score")
+            elapsed = request.json.get("elapsed")
         except:
             first = request.form["first"]
             last = request.form["last"]
             email = request.form["email"]
+            score = request.form["score"]
+            elapsed = request.form["elapsed"]
         #q = '''SELECT MAX(id) FROM users'''
         #maxID = c.execute(q).next()[0] #gets maxID in ID column to assign
                                        #a new unique ID
@@ -50,17 +74,16 @@ def submit():
         #    if t in titleCheck:
         #        error = True
         #    else:
-        score = 100
         clock = strftime("%I:%M:%S %m/%d/%Y")
-        populate.insert_score(first,last,email,score,clock)
+        populate.insert_score(conn, first,last,email,score, elapsed, clock)
 
-        q = '''SELECT first,last,email,score,clock FROM users'''
-        users = c.execute(q)
+        #q = '''SELECT first,last,email,score,clock FROM users'''
+        #users = c.execute(q)
 
         # q = "SELECT title FROM users"
         # result = c.execute(q)
         # result = [o for o in result][::-1]
-        return render_template("highscores.html",users=users)#,titles=result,haserror=error)
+        #return render_template("highscores.html",users=users)#,titles=result,haserror=error)
     else:
         # #get user whose title matches the url
         # t = title.replace("_"," ")
@@ -107,4 +130,4 @@ if __name__=="__main__":
     # set the instance variable debug to True
     app.debug = True
     # call the run method
-    app.run()
+    app.run(host='0.0.0.0', port='80')
