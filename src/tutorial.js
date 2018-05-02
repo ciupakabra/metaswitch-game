@@ -104,7 +104,7 @@ function changeTutorialStep() {
 		)
 	} else if (tutorialScreen == 7) {
 		game.tutorialPanel.updatePanel(205, 80,
-			"The colour of packets represent the resource they need. Unfufilled packets are slightly darker and have a black dot in the middle"
+			"The colour of packets represent the resource they need. Unfulfilled packets are slightly darker and have a black dot in the middle"
 		)
 		game.arrowSprite.visible = false;
 	} else if (tutorialScreen == 8) {
