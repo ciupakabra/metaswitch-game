@@ -58,22 +58,22 @@ function changeTutorialStep() {
 		newResource = new Resource(game.network, 680, 340, game.types[3]);
 		game.newResource = new Resource(game.network, 660, 300, game.types[0]);
 		game.tutorialPanel.updatePanel(55, 40,
-			"This is a city. The arcs around it represent the proportion of packet types it sends out"
+			"This is a city. The arcs around it represent the proportion of packet types it sends out."
 		)
 		game.arrowSprite.visible = true;
 		arrowPosition(game.arrowSprite, 200, 220, Math.PI/2);
 	} else if (tutorialScreen == 2) {
 		game.tutorialPanel.updatePanel(305, 40,
-			"This is a server. The server connects to the cities and resources, and sends packets to where they need to go"
+			"This is a server. The server connects to the cities and resources, and sends packets to where they need to go."
 		)
 		arrowPosition(game.arrowSprite, 450, 220, Math.PI/2);
 	} else if (tutorialScreen == 3) {
 		game.tutorialPanel.updatePanel(305, 40,
-			"You can buy a server by clicking on an empty space. A button will appear for you to confirm if you want to buy a server"
+			"You can buy a server by clicking on an empty space. A button will appear for you to confirm if you want to buy a server."
 		)
 	} else if (tutorialScreen == 4) {
 		game.tutorialPanel.updatePanel(555, 40,
-			"These are resources. The different colours represent different types of resource"
+			"These are resources. The different colours represent different types of resource."
 		)
 		arrowPosition(game.arrowSprite, 700, 220, Math.PI/2);
   } else if (tutorialScreen == 5) {
@@ -82,7 +82,7 @@ function changeTutorialStep() {
 		var cable = new Cable(game.network,	game.newServer,	game.newResource,	1,50, 1);
 		game.network.add_cable(cable);
 		game.tutorialPanel.updatePanel(205, 80,
-			"This is a cable. Packets travel along these cables to get to the resource they need and then travel back to the city"
+			"This is a cable. Packets travel along these cables to get to the resource they need and then travel back to the city."
 		)
 		arrowPosition(game.arrowSprite, 350, 260, Math.PI/2);
 		game.newCity.create_request = function() {
@@ -100,11 +100,11 @@ function changeTutorialStep() {
 		game.newCity.create_request();
 	} else if (tutorialScreen == 6) {
 		game.tutorialPanel.updatePanel(205, 80,
-			"Cables can be bought by clicking on a node, choosing \"Buy\/Add Server\" and then selecting the place you want to connect"
+			"Cables can be bought by clicking on a node, choosing \"Buy\/Add Server\" and then selecting the place you want to connect."
 		)
 	} else if (tutorialScreen == 7) {
 		game.tutorialPanel.updatePanel(205, 80,
-			"The colour of packets represent the resource they need. Unfufilled packets are slightly darker and have a black dot in the middle"
+			"The colour of packets represent the resource they need. Unfulfilled packets are slightly darker and have a black dot in the middle."
 		)
 		game.arrowSprite.visible = false;
 	} else if (tutorialScreen == 8) {
@@ -112,11 +112,11 @@ function changeTutorialStep() {
 		game.arrowSprite.visible = true;
 		arrowPosition(game.arrowSprite, 231, 59, Math.PI);
 		game.tutorialPanel.updatePanel(258, 8,
-			"This is your status. It tells you the amount of money you have, your score, and your total amount of time spent unpaused"
+			"This is your status. It tells you the amount of credit you have, your score, and your total amount of time spent unpaused."
 		);
 	} else if (tutorialScreen == 9) {
 		game.tutorialPanel.updatePanel(258, 8,
-			"You start with 2000 credits, and it increases every time you filfill a request"
+			"You start with 2000 credits, and it increases every time you fulfil a request."
 		);
 	} else if (tutorialScreen == 10) {
 		var buttonPause = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 1, 0, 1, 0);
@@ -130,12 +130,12 @@ function changeTutorialStep() {
 		var buttonReload = game.add.button(game.width - 40, 56, 'buttonReload', function() {}, this, 1,0,1,0);
 		buttonReload.onInputDown.add(function() {});
 		game.tutorialPanel.updatePanel(520, 8,
-			"These are the pause and restart buttons. Pausing the game allows you to build a network without time pressure"
+			"These are the pause and restart buttons. Pausing the game allows you to build a network without time pressure."
 		);
 		arrowPosition(game.arrowSprite, 835, 50, 0);
 	} else if (tutorialScreen == 11) {
 		game.tutorialPanel.updatePanel(520, 8,
-			"The game will start paused to allow you to build an initial network"
+			"The game will start paused to allow you to build an initial network."
 		);
   } else if (tutorialScreen == 12) {
 		if (paused) {
@@ -163,15 +163,15 @@ function changeTutorialStep() {
 					this);
 		}
 		game.tutorialPanel.updatePanel(210, 80,
-		  "After a certain amount of time an unfilled packet will die. This will be represented by a black circle"
+		  "After a certain amount of time an unfulfilled packet will die. This will be represented by a black circle."
 		)
 	} else if (tutorialScreen == 13) {
 		game.tutorialPanel.updatePanel(210, 80,
-			"Any dead packets will be removed before they are sent down another cable"
+			"Any dead packets will be removed before they are sent down another cable."
 		)
   } else if (tutorialScreen == 14) {
 		game.tutorialPanel.updatePanel(210, 80,
-			"This is the penalty bar. Every time a packet dies it's colour will be added to this. The game ends when this is filled"
+			"This is the penalty bar. Every time a packet dies its colour will be added to this. The game ends when this is filled."
 		)
 		arrowPosition(game.arrowSprite, 350, 60, -Math.PI/2);
   } else if (tutorialScreen == 15) {
@@ -193,32 +193,32 @@ function changeTutorialStep() {
 		}
 		arrowPosition(game.arrowSprite, 239, 332, -Math.PI/2);
 		game.tutorialPanel.updatePanel(99, 352,
-			"The inner bar is how full a node is. When a node is full the reward of all packets sent from that node will be decreased"
+			"The inner bar is how full a node is. When a node is full, the reward of all packets sent from that node will be decreased."
 		)
 	} else if (tutorialScreen == 16) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"Too many packets in nodes can be solved by upgrading servers or cables"
+			"Too many packets in nodes can be solved by upgrading servers or cables."
 		)
 		game.arrowSprite.visible = false;
   } else if (tutorialScreen == 17) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"Reselecting a cable gives the option of upgrading it and clicking on a server gives a \"Upgrade Server\" button"
+			"Reselecting a cable gives the option of upgrading it; clicking on a server gives an \"Upgrade Server\" button."
 		)
   } else if (tutorialScreen == 18) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"Upgrading a server gives it a greater capacity and allows more nodes to be connected to it"
+			"Upgrading a server gives it a greater capacity and allows more nodes to be connected to it."
 		)
   } else if (tutorialScreen == 19) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"Upgrading a cable allows more packets to be sent in a given time and packets will also travel down the cable faster"
+			"Upgrading a cable allows more packets to be sent in a given time and packets will also travel down the cable faster."
 		)
   } else if (tutorialScreen == 20) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"The level of a cable is given by its colour and the details of a server is given when it is clicked"
+			"The level of a cable is given by its colour and the details of a server are given when it is clicked."
 		)
   } else if (tutorialScreen == 21) {
 		game.tutorialPanel.updatePanel(305, 400,
-			"That concludes the tutorial. Press the button below to return to the main menu"
+			"That concludes the tutorial. Press the button below to return to the main menu."
 		)
 		game.tutorialPanel.nextButtonText.value = "Return to Menu";
 		game.tutorialPanel.nextButtonText.center();
