@@ -69,7 +69,9 @@ class Network {
 			for (var i = 0;i < this.adjacency_lists[v].length;++i) {
 				var u = this.adjacency_lists[v][i][0];
 				var edge = this.adjacency_lists[v][i][1];
-				var weight = edge.total_time(); // depends on the function name in class Cable
+				var weight = edge.total_time(this.nodes[v]);
+
+                // depends on the function name in class Cable
 				if (visited[u])
 					continue;
 
@@ -210,7 +212,7 @@ class Network {
 		}
 
         if (available.length==0) { return null; }
-        available=available.map(function(x){ return {'node': x.node, 'distance': 1/((x.distance)**2)}});
+        available=available.map(function(x){ return {'node': x.node, 'distance': 1/((x.distance)**3)}});
         var sum = available.map(function(x){return x.distance}).reduce(function(a,b){return a+b},0);
         available = available.map(function(x){ return {'node': x.node, 'distance': x.distance/sum}});
         var numChoice = Math.random();

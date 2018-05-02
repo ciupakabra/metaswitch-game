@@ -16,8 +16,15 @@ class Cable {
 		graphicsManager.spriteInitCable(this);
 	}
 
-	total_time() {
-		return this.distance / this.v;
+	total_time(node_from=null) {
+		var base =  this.distance / this.v;
+        var wait_time = 0
+        if (node_from==this.node_1){
+            wait_time = this.lambda * this.B1.length;
+        } else if (node_from==this.node_2) {
+            wait_time = this.lambda * this.B2.length;
+        }
+        return base + wait_time;
 	}
 
 	send_packet(node, packet) {
