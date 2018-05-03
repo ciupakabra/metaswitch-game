@@ -57,7 +57,7 @@ class City extends Node {
 
 	newTimer() {
 		this.nextTime = Phaser.Timer.SECOND * this.exp_distro.apply(this.seed);
-		game.time.events.add(
+		new MyTimer(
 			this.nextTime,
 			this.create_request,
 			this

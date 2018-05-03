@@ -68,7 +68,7 @@ class Cable {
 				packet.rewardPenalty();
 			}
 
-			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 1, true);
+			new MyTimer(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 1, true);
 		} else if (bufferNo == 2) {
 			if (this.B2.length == 0) {
 				return;
@@ -82,8 +82,8 @@ class Cable {
 			if (this.network.packetsInNode(this.node_2) > this.node_2.capacity) {
 				packet.rewardPenalty();
 			}
-
-			game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);
+			new MyTimer(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);
+			//game.time.events.add(Phaser.Timer.SECOND * this.lambda, this.releasePacket, this, 2, true);
 		}
 	}
 

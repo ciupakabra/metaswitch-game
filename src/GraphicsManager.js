@@ -176,6 +176,8 @@ class GraphicsManager {
 			node_to.process_packet(packet);
 			this.arcUpdate(node_to);
 		}, this, 0, node_to, packet);
+
+		tween.timeScale = speed;
 	}
 
 	deadPacket(packet) {

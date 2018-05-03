@@ -12,7 +12,7 @@ class Packet {
 		this.penalty = 0;
 		packetCount++;
 
-		game.time.events.add(
+		new MyTimer(
 			Phaser.Timer.SECOND * time,
 			this.die,
 			this

@@ -153,14 +153,14 @@ class WorldGenerator {
 		this.activeTypesCount++;
 		if (this.activeTypesCount == this.types.length)
 			return;
-		game.time.events.add(Phaser.Timer.MINUTE * 3, this.newResourceUnitTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * 3, this.newResourceUnitTimer, this);
 	}
 
 	newResourcesTimer() {
 		var currTypes = this.types.slice(0, this.activeTypesCount);
 		this.generateResources(1, currTypes);
 
-		game.time.events.add(Phaser.Timer.MINUTE * 7/12, this.newResourcesTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * 7/12, this.newResourcesTimer, this);
 	}
 
 	newCitiesTimer() {
@@ -170,7 +170,7 @@ class WorldGenerator {
 		this.citySpeed = Math.max((this.citySpeed - 0.25), 1);
 
 		//game.time.events.add(Phaser.Timer.SECOND * 0.5, this.newCitiesTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * this.citySpeed, this.newCitiesTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * this.citySpeed, this.newCitiesTimer, this);
 	}
 
 	initGameWorld() {
@@ -188,8 +188,8 @@ class WorldGenerator {
 		this.newRadiusTween(INITIAL_BOUNDS_RADIUS * 0.5);
 		this.newMinDistTween();
 
-		game.time.events.add(Phaser.Timer.MINUTE * 3.8, this.newResourceUnitTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 1.9, this.newResourcesTimer, this);
-		game.time.events.add(Phaser.Timer.MINUTE * 2, this.newCitiesTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * 3.8, this.newResourceUnitTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * 1.9, this.newResourcesTimer, this);
+		new MyTimer(Phaser.Timer.MINUTE * 2, this.newCitiesTimer, this);
 	}
 }

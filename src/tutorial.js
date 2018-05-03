@@ -36,6 +36,7 @@ function create() {
 	graphicsManager.network = game.network;
 
 	paused = false;
+	timers = [];
 }
 
 function changeTutorialStep() {
@@ -92,7 +93,7 @@ function changeTutorialStep() {
 				var res = game.network.get_nearest_resource(this, req_unit);
 				var cable = game.network.get_cable(this, res);
 				cable.send_packet(this, new_packet);
-				game.time.events.add(
+				new MyTimer(
 				  1500,
 					this.create_request,
 					this);
@@ -127,10 +128,21 @@ function changeTutorialStep() {
 		buttonPause.visible = false;
 		pause();
 		buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
-		var buttonReload = game.add.button(game.width - 40, 56, 'buttonReload', function() {}, this, 1,0,1,0);
+		var buttonReload = game.add.button(game.width - 40, 86, 'buttonReload', function() {}, this, 1,0,1,0);
+		buttonSpeed1 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 1, 0, 1, 0);
+		buttonSpeed1.onInputDown.add(function() {changeSpeed(2); game.buttonPress = true; buttonSpeed1.visible = false, buttonSpeed2.visible = true;})
+		buttonSpeed2 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 3, 2, 3, 2);
+		buttonSpeed2.onInputDown.add(function() {changeSpeed(4); game.buttonPress = true; buttonSpeed2.visible = false, buttonSpeed4.visible = true;})
+		buttonSpeed2.visible = false;
+		buttonSpeed4 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 5, 4, 5, 4);
+		buttonSpeed4.onInputDown.add(function() {changeSpeed(1); game.buttonPress = true; buttonSpeed4.visible = false, buttonSpeed1.visible = true;})
+		buttonSpeed4.visible = false;
 		buttonReload.onInputDown.add(function() {});
+		game.buttonSpeed = buttonSpeed1;
+		game.buttonSpeed2 = buttonSpeed2;
+		game.buttonSpeed4 = buttonSpeed4;
 		game.tutorialPanel.updatePanel(520, 8,
-			"These are the pause and restart buttons. Pausing the game allows you to build a network without time pressure."
+			"These are the pause, speed and restart buttons. Pausing the game allows you to build a network without time pressure"
 		);
 		arrowPosition(game.arrowSprite, 835, 50, 0);
 	} else if (tutorialScreen == 11) {
@@ -143,7 +155,12 @@ function changeTutorialStep() {
 			game.buttonPlay.visible = false;
 			game.buttonPause.visible = true;
 		}
+		changeSpeed(1)
+		game.buttonSpeed.visible = true;
+		game.buttonSpeed2.visible = false;
+		game.buttonSpeed4.visible = false;
 		game.buttonPause.onInputDown.removeAll();
+		game.buttonSpeed.onInputDown.removeAll();
 		graphicsManager.satisfactionBarInit();
 		arrowPosition(game.arrowSprite, 350, 260, Math.PI/2);
 		game.types[0] = new ResourceUnit(0, 10 + Math.max(2 * Math.ceil((0-2)/2),0), 3, RESOURCE_COLORS[0]);
@@ -157,7 +174,7 @@ function changeTutorialStep() {
 				var res = game.network.get_nearest_resource(this, req_unit);
 				var cable = game.network.get_cable(this, res);
 				cable.send_packet(this, new_packet);
-				game.time.events.add(
+				new MyTimer(
 				  1500,
 					this.create_request,
 					this);
@@ -229,10 +246,28 @@ function changeTutorialStep() {
 }
 
 function update() {
+	if (tutorialScreen < 8) {
+		totalTime += game.time.elapsedMS * speed;
+		timers.forEach(function(item) {
+			if (!item.expired) {
+				item.check();
+			} else {
+				timers.splice(timers.indexOf(item),1);
+			}
+		})
+	}
 	if (tutorialScreen >= 8) {
 		game.statusPanel.updateCredit(currentCredit);
 		if (!paused) {
-			totalTime += game.time.elapsedMS;
+			totalTime += game.time.elapsedMS * speed;
+			timers.forEach(function(item) {
+				if (!item.expired) {
+					item.check();
+					//tmp.push(item);
+				} else {
+					timers.splice(timers.indexOf(item),1);
+				}
+			})
 		}
 	}
 }
