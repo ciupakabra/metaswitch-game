@@ -368,6 +368,7 @@ function create() {
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 	this.oKey.onDown.add(function() {game.state.start('submit')}, this);
 
+//stop commenting out by here.
 	this.tabKey = game.input.keyboard.addKey(Phaser.Keyboard.TAB);
 	this.tabKey.onDown.add(moveToCity, this);
 
@@ -400,7 +401,9 @@ function create() {
 	game.currentActivePanel = null;
 	game.buttonPress = false;
 	game.cableMode = false;
-
+	game.cableDrag = false;
+	game.dragCable = null; //cableDrag is if the dragCable is out and about.
+  game.nodeCurrentOver = null; //note currently being hovered over.
 
 	network = new Network();
 	graphicsManager.network = network;
@@ -439,6 +442,18 @@ function update() {
 	generalClickCheck();
 	if (!paused) {
 		totalTime += game.time.elapsedMS;
+	}
+
+	if (cableDrag) {
+    game.dragCable = game.make.graphics();
+		game.dragCable.lineStyle(2,0xffffff);
+		game.dragCable.moveTo(nodeclicked.x,nodeclicked.y);
+		game.dragCable.lineTo(game.input.activePointer.position.x,game.input.activePointer.position.y);
+		game.dragCable.endFill();
+		game.dragCable.tint = CABLE_COLORS[0]
+		cables.add(game.dragCable);
+	} else {
+		game.dragCable = null;
 	}
 
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
@@ -488,7 +503,7 @@ function pause() {
 
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
-		if (game.origDragPoint) {
+		if (game.origDragPoint && !cableDrag) {
 			var xChange = game.origDragPoint.x - game.input.activePointer.position.x;
 			var yChange = game.origDragPoint.y - game.input.activePointer.position.y;
 			if (Math.abs(xChange) + Math.abs(yChange) > 2) {
@@ -528,6 +543,7 @@ function generalClickCheck() {
 			shopServerPanel.nowUp = true;
 			game.cableMode = false;
 		}
+		if (game.nodeClicked) {game.cableDrag = true;}
 		if (game.cableMode) {game.clicked = true;};
 		if (game.input.activePointer.duration > 200) {
 			game.clicked = false;
@@ -542,6 +558,8 @@ function generalClickCheck() {
 					shopServerPanel.nowUp = !shopServerPanel.nowUp;
 					shopServerPanel.setToNode(null);
 				}
+			} else if (game.nodeCurrentOver != null) {//just dragged and dropped a cable
+				  //Do a thing that joins the things together
 			} else {
 				game.cableMode = false;
 				game.currentActivePanel.visible = false;
@@ -553,6 +571,7 @@ function generalClickCheck() {
 		game.buttonPress = false;
 		game.clicked = false;
 		game.nodeclicked = null;
+		game.cableDrag = false;
 	}
 }
 

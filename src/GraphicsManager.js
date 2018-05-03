@@ -256,12 +256,14 @@ class GraphicsManager {
 function mouseOverListener(sprite) {
 	sprite.node.sillhouette.tint = 0xfffab0;
 	sprite.node.sillhouette.visible = true;
+	game.nodeCurrentOver = sprite.node;
 }
 
 function mouseOutListener(sprite) {
 	if (!sprite.node.clicked) {
 		sprite.node.sillhouette.visible = false;
 	}
+	game.nodeCurrentOver = null;
 }
 
 function mouseClickListener(sprite) {
