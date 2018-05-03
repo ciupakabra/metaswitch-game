@@ -10,6 +10,7 @@ var bootConfig = {
 		game.load.spritesheet('buttonSmall', 'assets/ui/menu/buttonsSmall.png', 250, 125);
 		game.load.spritesheet('buttonPause', 'assets/ui/menu/buttonsPause.png', 35, 35);
 		game.load.spritesheet('buttonReload', 'assets/ui/menu/buttonsReload.png',35,35);
+		game.load.spritesheet('buttonSpeed', 'assets/ui/menu/buttonsSpeed.png',35,35);
 		game.load.image('aboutUs', 'assets/ui/menu/aboutUs.png');
 		game.load.image('logo', 'assets/ui/menu/metaswitch-logo.png');
 		game.load.image('arrow', 'assets/ui/menu/arrow.png');
@@ -248,6 +249,8 @@ var packetCount = 0;
 var deadPackets = [];
 var paused = false;
 var release = [];
+var timers = [];
+var speed = 1;
 var totalTime = 0;
 var currentCity = null;
 for (var i = 0;i < RESOURCE_COLORS.length;++i) {
@@ -265,8 +268,10 @@ function initialisation() {
 	deadPackets = [];
 	release = [];
 	totalTime = 0;
+	timers = [];
 	paused = false;
 	foreverTimers = [];
+	speed = 1;
 	currentCity = null;
 	tutorialOn = false;
 	for (var i = 0;i < RESOURCE_COLORS.length;++i) {
@@ -339,8 +344,17 @@ function create() {
 	buttonPause.visible = false;
 	buttonPlay = game.add.button(game.width - 40, 8, 'buttonPause', function() {}, this, 3, 2, 3, 2);
 	buttonPlay.onInputDown.add(function() {pause(); game.buttonPress = true; buttonPause.visible = true; buttonPlay.visible = false;}, this);
-	buttonReload = game.add.button(game.width - 40, 56, 'buttonReload', function() {}, this, 1,0,1,0);
+	buttonSpeed1 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 1, 0, 1, 0);
+	buttonSpeed1.onInputDown.add(function() {changeSpeed(2); game.buttonPress = true; buttonSpeed1.visible = false, buttonSpeed2.visible = true;})
+	buttonSpeed2 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 3, 2, 3, 2);
+	buttonSpeed2.onInputDown.add(function() {changeSpeed(4); game.buttonPress = true; buttonSpeed2.visible = false, buttonSpeed4.visible = true;})
+	buttonSpeed2.visible = false;
+	buttonSpeed4 = game.add.button(game.width - 40, 47, 'buttonSpeed', function() {}, this, 5, 4, 5, 4);
+	buttonSpeed4.onInputDown.add(function() {changeSpeed(1); game.buttonPress = true; buttonSpeed4.visible = false, buttonSpeed1.visible = true;})
+	buttonSpeed4.visible = false;
+	buttonReload = game.add.button(game.width - 40, 86, 'buttonReload', function() {}, this, 1,0,1,0);
 	buttonReload.onInputDown.add(function() {game.state.start('menu')});
+
 	graphicsManager = new GraphicsManager();
 	worldGenerator = new WorldGenerator();
 	gameGroup = game.add.group();
@@ -360,9 +374,6 @@ function create() {
 
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
-
-	this.iKey = game.input.keyboard.addKey(Phaser.Keyboard.I);
-	this.iKey.onDown.add(function() {worldGenerator.generateResources(1, worldGenerator.types)}, this);
 
 //comment this out once submit debugging is complete
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
@@ -440,8 +451,17 @@ function update() {
   }
 
 	generalClickCheck();
+
 	if (!paused) {
-		totalTime += game.time.elapsedMS;
+		totalTime += game.time.elapsedMS * speed;
+		timers.forEach(function(item) {
+			if (!item.expired) {
+				item.check();
+				//tmp.push(item);
+			} else {
+				timers.splice(timers.indexOf(item),1);
+			}
+		})
 	}
 
 	if (cableDrag) {
@@ -582,4 +602,9 @@ function formatTime(millis) { //milliseconds -> MM:SS.XYZ
 	if (secs.length === 1) {secs = "0" + secs;}
 	var mins = String(Math.floor(millis/60000));
 	return mins + ":" + secs + "." + end;
+}
+
+function changeSpeed(amount) {
+	speed = amount;
+	packets.forEach(function(item) {item.tween.timeScale = speed;})
 }
