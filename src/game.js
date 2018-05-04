@@ -360,6 +360,7 @@ function create() {
 	gameGroup = game.add.group();
 
 	cables = game.add.group();
+	tmpcables = game.add.group();
 	packets = game.add.group();
 	nodes = game.add.group();
 	ui = game.add.group();
@@ -388,8 +389,8 @@ function create() {
 
 	this.plusKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	this.minusKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-	this.plusKey.onDown.add(function() {if(worldScale <= 1){worldScale -= 0.05;gameGroup.scale.set(worldScale);}}, this);
-	this.minusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale += 0.05;	gameGroup.scale.set(worldScale);}}, this);
+	this.plusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale -= 0.05;gameGroup.scale.set(worldScale);}}, this);
+	this.minusKey.onDown.add(function() {if(worldScale <= 1){worldScale += 0.05;	gameGroup.scale.set(worldScale);}}, this);
 
   this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
 	this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -425,8 +426,6 @@ function create() {
 	game.currentActivePanel = null;
 	game.buttonPress = false;
 	game.cableMode = false;
-	game.cableDrag = false;
-	game.dragCable = null; //cableDrag is if the dragCable is out and about.
   game.nodeCurrentOver = null; //note currently being hovered over.
 
 	network = new Network();
@@ -477,18 +476,6 @@ function update() {
 		})
 	}
 
-	if (game.cableDrag) {
-    game.dragCable = game.make.graphics();
-		game.dragCable.lineStyle(2,0xffffff);
-		game.dragCable.moveTo(nodeclicked.x,nodeclicked.y);
-		game.dragCable.lineTo(game.input.activePointer.position.x,game.input.activePointer.position.y);
-		game.dragCable.endFill();
-		game.dragCable.tint = CABLE_COLORS[0]
-		cables.add(game.dragCable);
-	} else {
-		game.dragCable = null;
-	}
-
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
 		game.currentActivePanel.setToNode(game.currentActivePanel.node);
 	}
@@ -536,7 +523,7 @@ function pause() {
 
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
-		if (game.origDragPoint && !game.cableDrag) {
+		if (game.origDragPoint) {
 			var xChange = game.origDragPoint.x - game.input.activePointer.position.x;
 			var yChange = game.origDragPoint.y - game.input.activePointer.position.y;
 			if (Math.abs(xChange) + Math.abs(yChange) > 2) {
@@ -570,13 +557,13 @@ function generalClickCheck() {
 	if (game.input.activePointer.isDown) {
 		if (game.currentActivePanel == null) {
 			game.clicked = true;
-		} else if (!game.buttonPress && !game.nodeClicked && !game.cableMode) {
+		} else if (!game.buttonPress && !game.cableMode) {
 			game.currentActivePanel.visible = false;
 			game.currentActivePanel = null;
 			shopServerPanel.nowUp = true;
 			game.cableMode = false;
 		}
-		if (game.nodeClicked) {game.cableDrag = true;}
+
 		if (game.cableMode) {game.clicked = true;};
 		if (game.input.activePointer.duration > 200) {
 			game.clicked = false;
@@ -604,7 +591,6 @@ function generalClickCheck() {
 		game.buttonPress = false;
 		game.clicked = false;
 		game.nodeclicked = null;
-		game.cableDrag = false;
 	}
 }
 
