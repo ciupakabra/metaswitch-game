@@ -388,8 +388,8 @@ function create() {
 
 	this.plusKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	this.minusKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-	this.plusKey.onDown.add(function() {if(worldScale <= 1){worldScale += 0.05;gameGroup.scale.set(worldScale);}}, this);
-	this.minusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale -= 0.05;	gameGroup.scale.set(worldScale);}}, this);
+	this.plusKey.onDown.add(function() {if(worldScale <= 1){worldScale -= 0.05;gameGroup.scale.set(worldScale);}}, this);
+	this.minusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale += 0.05;	gameGroup.scale.set(worldScale);}}, this);
 
   this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
 	this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
