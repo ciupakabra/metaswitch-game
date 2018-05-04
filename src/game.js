@@ -367,6 +367,9 @@ function create() {
 	ui.add(buttonPause);
 	ui.add(buttonPlay);
 	ui.add(buttonReload);
+	ui.add(buttonSpeed1);
+	ui.add(buttonSpeed2);
+	ui.add(buttonSpeed4);
 
 	gameGroup.add(cables);
 	gameGroup.add(packets);
@@ -375,13 +378,23 @@ function create() {
 	gameGroup.position.setTo(game.world.centerX, game.world.centerY);
 	game.input.mouse.capture = true;
 
-//comment this out once submit debugging is complete
+/*comment this out once submit debugging is complete
 	this.oKey = game.input.keyboard.addKey(Phaser.Keyboard.O);
 	this.oKey.onDown.add(function() {game.state.start('submit')}, this);
 
-//stop commenting out by here.
+//stop commenting out by here.*/
 	this.tabKey = game.input.keyboard.addKey(Phaser.Keyboard.TAB);
 	this.tabKey.onDown.add(moveToCity, this);
+
+	this.plusKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+	this.minusKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+	this.plusKey.onDown.add(function() {if(worldScale <= 1){worldScale += 0.05;gameGroup.scale.set(worldScale);}}, this);
+	this.minusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale -= 0.05;	gameGroup.scale.set(worldScale);}}, this);
+
+  this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+	this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+	this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+	this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
 	function mouseWheel(event) {
 		var cursorx = (gameGroup.x - game.input.activePointer.position.x)/worldScale;
@@ -437,17 +450,17 @@ function create() {
 function update() {
 	updateCamera();
 
-	if (cursors.up.isDown) {
-    gameGroup.y += 4;
+	if (cursors.up.isDown || this.wKey.isDown) {
+    gameGroup.y += 8;
   }
-  else if (cursors.down.isDown) {
-    gameGroup.y -= 4;
+  else if (cursors.down.isDown || this.sKey.isDown) {
+    gameGroup.y -= 8;
   }
 
-	if (cursors.left.isDown) {
-    gameGroup.x += 4;
-  } else if (cursors.right.isDown) {
-    gameGroup.x -= 4;
+	if (cursors.left.isDown || this.aKey.isDown) {
+    gameGroup.x += 8;
+  } else if (cursors.right.isDown || this.dKey.isDown) {
+    gameGroup.x -= 8;
   }
 
 	generalClickCheck();
@@ -464,7 +477,7 @@ function update() {
 		})
 	}
 
-	if (cableDrag) {
+	if (game.cableDrag) {
     game.dragCable = game.make.graphics();
 		game.dragCable.lineStyle(2,0xffffff);
 		game.dragCable.moveTo(nodeclicked.x,nodeclicked.y);
@@ -523,7 +536,7 @@ function pause() {
 
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
-		if (game.origDragPoint && !cableDrag) {
+		if (game.origDragPoint && !game.cableDrag) {
 			var xChange = game.origDragPoint.x - game.input.activePointer.position.x;
 			var yChange = game.origDragPoint.y - game.input.activePointer.position.y;
 			if (Math.abs(xChange) + Math.abs(yChange) > 2) {
