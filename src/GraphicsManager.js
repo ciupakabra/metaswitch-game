@@ -181,7 +181,8 @@ class GraphicsManager {
 	}
 
 	deadPacket(packet) {
-		packet.sprite.tint = 0x000000;
+		packet.sprite.beginFill(0x000000);
+		packet.sprite.drawCircle(0, 0, 8);
 	}
 
 	satisfactionBarUpdate() {
