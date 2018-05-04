@@ -175,7 +175,7 @@ class WorldGenerator {
 
 	initGameWorld() {
 		for (var i = 0;i < RESOURCE_COLORS.length;++i) {
-			this.types.push(new ResourceUnit(i, 10 + Math.max(2 * Math.ceil((i-2)/2),0), 40, RESOURCE_COLORS[i]));
+			this.types.push(new ResourceUnit(i, 10 + Math.max(2 * Math.ceil((i-2)/2),0), 30, RESOURCE_COLORS[i]));
 			this.hasResource.push(false);
 		}
 
