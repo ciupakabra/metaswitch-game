@@ -180,7 +180,7 @@ function changeTutorialStep() {
 					this);
 		}
 		game.tutorialPanel.updatePanel(210, 80,
-		  "After a certain amount of time an unfulfilled packet will die. This will be represented by a black circle."
+		  "After a certain amount of time an unfulfilled packet will die. This will be represented by a black circle with an outline of its colour."
 		)
 	} else if (tutorialScreen == 13) {
 		game.tutorialPanel.updatePanel(210, 80,
