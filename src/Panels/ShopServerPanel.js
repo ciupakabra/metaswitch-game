@@ -37,7 +37,7 @@ class ShopServerPanel extends Panel {
 				this.xpos = 0;
 			}
       this.y = game.input.activePointer.position.y;
-			this.ypos = this.y;
+			this.ypos = this.y-this.height/2;
 			if (this.y + this.height > game.height) {
 				this.ypos = game.height - this.height;
 			}
