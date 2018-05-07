@@ -28,7 +28,7 @@ The company has some ideas for puzzles and games that might work, but are open t
 
 There are a couple of ways to launch the server. 
 
-One is to use docker to create an image and run it in a container. The Docerfile is provided and tested, so that simply needs building and running. The port used is 80.
+One is to use docker to create an image and run it in a container. The Dockerfile is provided and tested, so that simply needs building and running. The port used is 80.
 
 The other is to load the python server (Flask) manually:
 
