@@ -22,6 +22,10 @@ var bootConfig = {
 		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 		slickUI = game.plugins.add(Phaser.Plugin.SlickUI);
 		game.add.plugin(PhaserInput.Plugin);
+
+		this.game.scale.pageAlignHorizontally = true;
+		this.game.scale.pageAlignVertically = true;
+		this.game.scale.refresh();
 	}
 }
 
@@ -389,8 +393,8 @@ function create() {
 
 	this.plusKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	this.minusKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-	this.plusKey.onDown.add(function() {if(worldScale >= 0.25){worldScale -= 0.05;gameGroup.scale.set(worldScale);}}, this);
-	this.minusKey.onDown.add(function() {if(worldScale <= 1){worldScale += 0.05;	gameGroup.scale.set(worldScale);}}, this);
+	this.plusKey.onDown.add(function() {if(worldScale > 0.25){worldScale -= 0.05;gameGroup.scale.set(worldScale);}}, this);
+	this.minusKey.onDown.add(function() {if(worldScale < 1){worldScale += 0.05;	gameGroup.scale.set(worldScale);}}, this);
 
   this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
 	this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -426,6 +430,9 @@ function create() {
 	game.currentActivePanel = null;
 	game.buttonPress = false;
 	game.cableMode = false;
+
+	game.cableDrag = false;
+	game.dragCable = null;
   game.nodeCurrentOver = null; //note currently being hovered over.
 
 	network = new Network();
@@ -464,16 +471,28 @@ function update() {
 
 	generalClickCheck();
 
+	if (game.cableDrag) {
+		game.dragCable.clear();
+		game.dragCable.alpha = 1;
+		game.dragCable.lineStyle(2,0xffffff,1);
+		game.dragCable.moveTo(game.nodeclicked.x, game.nodeclicked.y);
+		if (game.nodeCurrentOver != null) {
+			game.dragCable.lineTo(game.nodeCurrentOver.x, game.nodeCurrentOver.y);
+		} else {
+			var x = (game.input.activePointer.position.x - gameGroup.x)/worldScale
+			var y = (game.input.activePointer.position.y - gameGroup.y)/worldScale
+			game.dragCable.lineTo(x, y);
+		}
+
+	} else {
+		game.dragCable = null;
+	}
+
 	if (!paused) {
 		totalTime += game.time.elapsedMS * speed;
-		timers.forEach(function(item) {
-			if (!item.expired) {
-				item.check();
-				//tmp.push(item);
-			} else {
-				timers.splice(timers.indexOf(item),1);
-			}
-		})
+		while ((timers.length > 0) && (timers[0].check())) {
+			removeTopTimer();
+		}
 	}
 
 	if (game.currentActivePanel != null && game.currentActivePanel != shopServerPanel) {
@@ -482,7 +501,7 @@ function update() {
 
 	statusPanel.updateCredit(currentCredit);
 
-	var thresholdScore = 5000;
+	var thresholdScore = 20000;
 	//var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
@@ -523,7 +542,7 @@ function pause() {
 
 function updateCamera() {
 	if (game.input.activePointer.isDown) {
-		if (game.origDragPoint) {
+		if (game.origDragPoint && !game.cableDrag) {
 			var xChange = game.origDragPoint.x - game.input.activePointer.position.x;
 			var yChange = game.origDragPoint.y - game.input.activePointer.position.y;
 			if (Math.abs(xChange) + Math.abs(yChange) > 2) {
@@ -563,7 +582,14 @@ function generalClickCheck() {
 			shopServerPanel.nowUp = true;
 			game.cableMode = false;
 		}
-
+		if (game.nodeClicked && !game.cableDrag && (game.currentActivePanel == null)) {
+			game.cableDrag = true;
+			game.dragCable = game.add.graphics();
+    	game.dragCable.lineStyle(2,0xffffff,1);
+			game.dragCable.moveTo(game.nodeclicked.x, game.nodeclicked.y);
+			game.dragCable.lineTo(game.nodeCurrentOver.x, game.nodeCurrentOver.y);
+			cables.add(game.dragCable);
+		}
 		if (game.cableMode) {game.clicked = true;};
 		if (game.input.activePointer.duration > 200) {
 			game.clicked = false;
@@ -572,15 +598,79 @@ function generalClickCheck() {
 	}
 
 	if (game.input.activePointer.isUp) {
+		if (game.cableDrag) {
+			game.dragCable.clear();
+			cables.remove(game.dragCable);
+			game.dragCable = null;
+			if (game.nodeCurrentOver != null) {
+				var cable = network.get_adjacent_cable(game.nodeclicked, game.nodeCurrentOver);
+				if ((network.can_connect(game.nodeclicked, game.nodeCurrentOver)) || cable != null) {
+					var dist = game.nodeclicked.dist(game.nodeCurrentOver);
+			    var baseCost = Math.floor((dist/4 + (dist*dist)/5000)/1.5) + 50;
+					var cost = -1;
+					if (cable != null) {
+						cost = Math.floor(baseCost * (cable.level)*(1 + cable.level/3));
+					}
+					if ((baseCost <= currentCredit) && (cable == null)) {
+						cable = new Cable(
+		  				network,
+		  				game.nodeclicked,
+		  				game.nodeCurrentOver,
+		  				NEW_CABLE_LAMBDA,
+		  				NEW_CABLE_V,
+		          1
+		  			);
+						currentCredit -= baseCost;
+						network.add_cable(cable);
+					} else if (cost <= currentCredit) {
+						currentCredit -= cost;
+
+		        cable.lambda -= 0.15;
+		        cable.level += 1;
+		        var level = cable.level;
+		        cable.v += 50 + (4 * Math.pow(Math.floor(level/2),2));
+		        network.update_distances();
+
+		        if (level <= 6) {
+		          cable.graphics.tint = CABLE_COLORS[level - 1];
+		        } else if (level == 7) {
+		          var timer = game.time.create(false);
+		          foreverTimers.push(timer);
+		          cable.timer = timer.loop(100, updateCable, cable, cable);
+		          cable.version = 2;
+		          function updateCable(item) {
+		            item.version += 1;
+		            if (item.version == CABLE_COLORS.length) {
+		              item.version = 2;
+		            }
+		            item.graphics.tint = CABLE_COLORS[cable.version];
+		          }
+		          timer.start();
+		        } else {
+		          cable.timer.delay = (100/(level - 6));
+		        }
+					}
+				}
+			}
+			game.cableDrag = false;
+		}
+
 		if (game.clicked && !game.buttonPress) {
-			if (!game.cableMode) {
+			if ((game.nodeclicked != null) && (game.nodeclicked == game.nodeCurrentOver) && !game.cableMode) {
+				game.buttonPress = true;
+				if (game.nodeclicked.type == "server") {
+					nodeInfoServerPanel.setToNode(game.nodeclicked);
+				} else if (game.nodeclicked.type == "resource"){
+					nodeResourcePanel.setToNode(game.nodeclicked);
+			  } else {
+					nodeCityPanel.setToNode(game.nodeclicked);
+				}
+		  } else if (!game.cableMode) {
 				if (!game.drag) {
 					shopServerPanel.nowUp = !shopServerPanel.nowUp;
 					shopServerPanel.setToNode(null);
 				}
-			} else if (game.nodeCurrentOver != null) {//just dragged and dropped a cable
-				  //Do a thing that joins the things together
-			} else {
+			} else if (game.currentActivePanel != null){
 				game.cableMode = false;
 				game.currentActivePanel.visible = false;
 				game.currentActivePanel = null;
@@ -591,6 +681,7 @@ function generalClickCheck() {
 		game.buttonPress = false;
 		game.clicked = false;
 		game.nodeclicked = null;
+		game.nodeClicked = false;
 	}
 }
 

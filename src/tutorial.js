@@ -35,8 +35,8 @@ function create() {
 	game.network = new Network();
 	graphicsManager.network = game.network;
 
+	initialisation();
 	paused = false;
-	timers = [];
 }
 
 function changeTutorialStep() {

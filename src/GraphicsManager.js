@@ -271,24 +271,19 @@ function mouseOutListener(sprite) {
 
 function mouseClickListener(sprite) {
 	game.nodeclicked = sprite.node;
-	game.buttonPress = true;
-	/*
-	if (!sprite.node.clicked) {
-		sprite.node.sillhouette.tint = 0xffff00;
-		sprite.node.sillhouette.visible = true;
-		sprite.node.clicked = true;
-	} else {
-		sprite.node.sillhouette.visible = false
-		sprite.node.clicked = false;
-	}
-	*/
+	game.nodeClicked = true;
+	//game.buttonPress = true;
+
 	if (game.cableMode) {
+		game.buttonPress = true;
 		shopCablePanel.enableButton(sprite.node);
-	} else if (sprite.node.type == "server") {
+	}
+	/*else if (sprite.node.type == "server") {
 		nodeInfoServerPanel.setToNode(sprite.node);
 	} else if (sprite.node.type == "resource"){
 		nodeResourcePanel.setToNode(sprite.node);
   } else {
 		nodeCityPanel.setToNode(sprite.node);
 	}
+	*/
 }

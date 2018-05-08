@@ -70,7 +70,7 @@ class ShopServerPanel extends Panel {
 		this.buyServerButton.add(this.buyServerButtonText).center();
 
 		this.buyServerButton.events.onInputDown.add(function() {
-      game.nodeclicked = true;
+      //game.nodeclicked = true;
       game.buttonPress = true;
 			if (currentCredit < this.cost()) {
 				this.buyServerButtonText.value = "Insufficient Funds";
