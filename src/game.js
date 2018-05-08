@@ -622,7 +622,7 @@ function generalClickCheck() {
 		  			);
 						currentCredit -= baseCost;
 						network.add_cable(cable);
-					} else if (cost <= currentCredit) {
+					} else if ((cost <= currentCredit) && (cable != null)) {
 						currentCredit -= cost;
 
 		        cable.lambda -= 0.15;
