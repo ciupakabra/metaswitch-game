@@ -36,7 +36,9 @@ function create() {
 	graphicsManager.network = game.network;
 
 	initialisation();
+	tutorialOn = true;
 	paused = false;
+	timers = [];
 }
 
 function changeTutorialStep() {
