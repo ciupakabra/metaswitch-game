@@ -582,7 +582,7 @@ function generalClickCheck() {
 			shopServerPanel.nowUp = true;
 			game.cableMode = false;
 		}
-		if (game.nodeClicked && !game.cableDrag && (game.currentActivePanel == null)) {
+		if (game.nodeClicked && !game.cableDrag && (game.currentActivePanel == null) && (game.nodeCurrentOver != null)) {
 			game.cableDrag = true;
 			game.dragCable = game.add.graphics();
     	game.dragCable.lineStyle(2,0xffffff,1);
