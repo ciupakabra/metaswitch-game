@@ -7,8 +7,8 @@ import os.path
 from time import strftime
 
 # Database type
-#dbType = 'local' # use a local sqlite database
-dbType = 'remote' # use a remote database, specify credentials below
+dbType = 'local' # use a local sqlite database
+#dbType = 'remote' # use a remote database, specify credentials below
 
 # Remote DB Config (if appropriate)
 dbHost = '127.0.0.1'
