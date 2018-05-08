@@ -20,6 +20,38 @@
     </style>
 </head>
 <body>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'build/game.min.js') }}"></script>
+    <br />
+    <div id="game"><script type="text/javascript" src="{{ url_for('static', filename = 'build/game.min.js') }}"></script></div>
+    <center>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,600' rel='stylesheet'>
+    <style>
+        body {
+          font-family: 'Lato';
+          font-size: 22px;
+          font-weight: 300;
+        }
+        .boxed {
+          width: 900px;
+          border: 1px solid black;
+          padding: 20px 0;
+        }
+        .boxedh {
+          width: 900px;
+          border: 1px solid black;
+          padding: 10px 0;
+          font-weight: 600;
+        }
+    </style>
+    <br />
+    <div class="boxedh">
+      Controls
+    </div>
+    <div class="boxed">
+      Use the arrow keys, WASD, or left click and drag to move the camera. <br />
+      Press tab to move the camera to different cities. <br />
+      Use Q and E to zoom in and out respectively. You can also use the scroll wheel for this.
+    </div>
+    </center>
+
 </body>
 </html>

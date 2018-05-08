@@ -2,6 +2,7 @@ var config = {
 	renderer: Phaser.AUTO,
 	width: 900,
 	height: 600,
+	parent: "game",
 }
 
 var bootConfig = {
