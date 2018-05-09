@@ -502,10 +502,11 @@ function update() {
 	statusPanel.updateCredit(currentCredit);
 
 	var thresholdScore = 20000;
+	var submitCheck = false;
 	//var redirect;
 	if (currentPenalty>=maxPenalty){
 		//the game ends once the user has exceeded the maximum penalty
-		if (lifetimeCredit>=thresholdScore){ //&& !submitCheck){
+		if (true || lifetimeCredit>=thresholdScore){
 			//submitCheck = true;
 			//if their score is good enough for Metaswitch to be interested,
 			//they are prompted to submit their contact info

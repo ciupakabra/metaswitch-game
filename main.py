@@ -59,8 +59,8 @@ def submit():
             first = request.form["first"]
             last = request.form["last"]
             email = request.form["email"]
-            score = request.form["score"]
-            elapsed = request.form["elapsed"]
+            score = 0
+            elapsed = 0
 
         clock = strftime("%I:%M:%S %m/%d/%Y")
         populate.insert_score(conn, first,last,email,score, elapsed, clock)
